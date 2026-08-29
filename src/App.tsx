@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Menu,
   X,
-  Link as LinkIcon,
   Facebook,
   Upload,
   FileText,
@@ -27,11 +26,7 @@ const FACEBOOK_URL = 'https://www.facebook.com/' // TODO: replace with the real 
 
 import zavodBalls from './assets/zavod1.jpg'
 import zavodProte from './assets/zavod.jpg'
-import gasCabinet from './assets/gas-cabinet.jpg'
 import uscLogo from './assets/usc-logo.jpg'
-import sampleBranded from './assets/sample-valve-branded.jpg'
-import sampleWelded from './assets/sample-valves-welded.jpg'
-import sampleHandles from './assets/sample-valves-handles.jpg'
 import proteStation from './assets/prote-station.jpg'
 
 /* ------------------------------------------------------------------ */
@@ -133,30 +128,6 @@ const NAV_LINKS = [
   { label: 'Каталог', href: '#catalog' },
   { label: 'Партнерам та дилерам', href: '#dealers' },
   { label: 'Сертифікати та контакти', href: '#contacts' },
-]
-
-const SIZE_RANGES = [
-  {
-    range: '15–50',
-    title: 'Крани фланцеві та муфтові',
-    desc: 'Малі діаметри для опалення, газу та водопостачання. Ручне керування.',
-    pressure: 'PN16 – PN40',
-    img: sampleBranded,
-  },
-  {
-    range: '65–250',
-    title: 'Крани фланцеві та під приварку',
-    desc: 'Середні діаметри для теплопунктів і промислових мереж, у т.ч. з приводом.',
-    pressure: 'PN16 – PN25',
-    img: sampleHandles,
-  },
-  {
-    range: '300–700',
-    title: 'Крани великих діаметрів',
-    desc: 'Магістральні застосування, зварна конструкція, редукторний / електропривод.',
-    pressure: 'PN16 – PN25',
-    img: sampleWelded,
-  },
 ]
 
 function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
@@ -481,133 +452,19 @@ function Catalog() {
           Наш асортимент
         </h2>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 sm:gap-6 lg:gap-7">
-          {/* Card 1 — TM USC кульові крани */}
-          <article>
-            <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#4A4D52]">
-              <img
-                src={sampleWelded}
-                alt="TM USC — сталева кульова запірна арматура власного виробництва"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <a
-                href="#full-catalog"
-                className="group/btn absolute bottom-4 right-4 flex items-center overflow-hidden rounded-full bg-white text-gray-900"
-              >
-                <span className="flex h-11 w-11 items-center justify-center">
-                  <LinkIcon size={16} />
-                </span>
-                <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium transition-all duration-500 group-hover:max-w-[180px] group-hover:pr-5">
-                  Дивитися перелік
-                </span>
-              </a>
-            </div>
-            <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              Сталеві кульові крани фланцеві, під приварку, муфтові та комбіновані —
-              водне й газове середовище
-            </p>
-            <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              TM USC — кульові крани
-            </h3>
-          </article>
-
-          {/* Card 2 — ШГРП / газове обладнання */}
-          <article>
-            <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#F5B915]">
-              <img
-                src={gasCabinet}
-                alt="ШГРП / ГРПШ — шафові газорегуляторні пункти TM USC"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <a
-                href="#full-catalog"
-                className="group/btn absolute bottom-4 right-4 flex items-center overflow-hidden rounded-full bg-white text-gray-900"
-              >
-                <span className="flex h-11 w-11 items-center justify-center">
-                  <LinkIcon size={16} />
-                </span>
-                <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium transition-all duration-500 group-hover:max-w-[180px] group-hover:pr-5">
-                  Дивитися перелік
-                </span>
-              </a>
-            </div>
-            <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              ШГРП/ГРПШ, засувки, фланці, люки, хомути, монтажні ящики та трубні деталі
-            </p>
-            <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              Газове та трубопровідне обладнання
-            </h3>
-          </article>
-
-          {/* Card 3 — PROTE */}
-          <article>
-            <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#1E7FC2]">
-              <img
-                src={proteStation}
-                alt="PROTE — станція водопідготовки та захисту від корозії"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-            </div>
-            <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              Технології водопідготовки та захисту трубопроводів від корозії й
-              відкладень від партнера PROTE
-            </p>
-            <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              PROTE
-            </h3>
-          </article>
-        </div>
-
-        {/* TM USC — size range subcatalog */}
-        <div className="mt-16 sm:mt-20">
-          <div className="mb-8 flex items-center gap-3">
-            <span className="text-[13px] font-medium text-gray-700">
-              TM USC — розмірний ряд
-            </span>
-            <span className="h-px flex-1 bg-gray-300" />
-          </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
-            {SIZE_RANGES.map((r) => (
-              <article
-                key={r.range}
-                className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#4A4D52]">
-                  <img
-                    src={r.img}
-                    alt={`Кульові крани TM USC ${r.range}`}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[12px] font-semibold text-gray-900">
-                    Ду {r.range} мм
-                  </span>
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h4 className="text-[15px] font-semibold text-gray-900">{r.title}</h4>
-                  <p className="mt-1 text-[13px] leading-[1.5] text-gray-600">{r.desc}</p>
-                  <div className="mt-4 flex items-center gap-2 text-[12px] text-gray-500">
-                    <Gauge size={14} className="text-[#1E7FC2]" />
-                    {r.pressure}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="mt-6 text-[12px] text-gray-500">
-            Понад 100 типорозмірів. Повний перелік з тисками та кресленнями — у каталозі.
-          </p>
-        </div>
-
-        {/* Full assortment — collapsible list (no prices) */}
-        <div id="full-catalog" className="mt-16 scroll-mt-24 sm:mt-20">
+        {/* Full assortment — single unified list (no prices) */}
+        <div id="full-catalog" className="scroll-mt-24">
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 className="text-[20px] font-semibold text-gray-900 sm:text-[24px]">
-                Повний перелік продукції
-              </h3>
-              <p className="mt-1 max-w-[60ch] text-[13px] leading-[1.6] text-gray-600 sm:text-[14px]">
-                Понад 185 позицій у {PRODUCT_CATEGORIES.length} категоріях. Оберіть категорію,
-                щоб розгорнути перелік типорозмірів. Актуальні ціни — за запитом.
+              <p className="max-w-[68ch] text-[15px] leading-[1.7] text-gray-600 sm:text-[16px]">
+                Повний асортимент трубопровідної та запірної арматури, газового й
+                монтажного обладнання — від кульових кранів власного виробництва TM USC
+                до засувок, фланців, люків, хомутів і трубних деталей.{' '}
+                <span className="font-medium text-gray-900">
+                  Понад 185 позицій у {PRODUCT_CATEGORIES.length} категоріях.
+                </span>{' '}
+                Оберіть категорію, щоб розгорнути перелік типорозмірів. Актуальні ціни —
+                за запитом.
               </p>
             </div>
             <a
@@ -624,6 +481,35 @@ function Catalog() {
           </div>
 
           <ProductAccordion />
+        </div>
+
+        {/* PROTE — partner line, kept as a separate highlight */}
+        <div className="mt-14 sm:mt-16">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="text-[13px] font-medium text-gray-700">
+              Партнерська лінійка
+            </span>
+            <span className="h-px flex-1 bg-gray-300" />
+          </div>
+          <article className="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] md:grid-cols-2">
+            <div className="relative aspect-[16/10] overflow-hidden bg-[#1E7FC2] md:aspect-auto">
+              <img
+                src={proteStation}
+                alt="PROTE — станція водопідготовки та захисту від корозії"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+              <h3 className="text-[18px] font-semibold text-gray-900 sm:text-[22px]">
+                PROTE
+              </h3>
+              <p className="mt-3 max-w-[52ch] text-[14px] leading-[1.7] text-gray-600 sm:text-[15px]">
+                Технології водопідготовки та захисту трубопроводів від корозії й
+                відкладень від партнера PROTE. Рішення для промислових і комунальних
+                систем водопостачання та теплопостачання.
+              </p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
