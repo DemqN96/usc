@@ -18,6 +18,7 @@ import {
   Gauge,
   ChevronDown,
   Download,
+  Package,
 } from 'lucide-react'
 
 import { PRODUCT_CATEGORIES } from './products'
@@ -32,6 +33,16 @@ import sampleBranded from './assets/sample-valve-branded.jpg'
 import sampleWelded from './assets/sample-valves-welded.jpg'
 import sampleHandles from './assets/sample-valves-handles.jpg'
 import proteStation from './assets/prote-station.jpg'
+import valveDrawing from './assets/ball-valve-drawing.png'
+
+/* Representative image per catalog category.
+   Ball valves — technical cutaway from the USC 2026 catalog (PDF);
+   ШГРП — real photo of a TM USC gas cabinet. Categories without an
+   authentic image fall back to a neutral icon. */
+const CATEGORY_IMAGES: Record<string, string> = {
+  'ball-valves': valveDrawing,
+  shgrp: gasCabinet,
+}
 
 /* ------------------------------------------------------------------ */
 /* Small helpers                                                       */
@@ -637,6 +648,7 @@ function ProductAccordion() {
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
       {PRODUCT_CATEGORIES.map((cat) => {
         const isOpen = !!open[cat.id]
+        const img = CATEGORY_IMAGES[cat.id]
         return (
           <div
             key={cat.id}
@@ -648,6 +660,17 @@ function ProductAccordion() {
               aria-expanded={isOpen}
               className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-gray-50 sm:px-6 sm:py-5"
             >
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-100 bg-gray-50 sm:h-20 sm:w-20">
+                {img ? (
+                  <img
+                    src={img}
+                    alt={cat.name}
+                    className="h-full w-full object-contain p-1"
+                  />
+                ) : (
+                  <Package size={26} className="text-[#1E7FC2]/60" />
+                )}
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <h4 className="text-[15px] font-semibold text-gray-900 sm:text-[16px]">
