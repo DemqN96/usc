@@ -16,7 +16,11 @@ import {
   Mail,
   MapPin,
   Gauge,
+  ChevronDown,
+  Download,
 } from 'lucide-react'
+
+import { PRODUCT_CATEGORIES } from './products'
 
 const FACEBOOK_URL = 'https://www.facebook.com/' // TODO: replace with the real USC page URL
 
@@ -27,6 +31,7 @@ import uscLogo from './assets/usc-logo.jpg'
 import sampleBranded from './assets/sample-valve-branded.jpg'
 import sampleWelded from './assets/sample-valves-welded.jpg'
 import sampleHandles from './assets/sample-valves-handles.jpg'
+import proteStation from './assets/prote-station.jpg'
 
 /* ------------------------------------------------------------------ */
 /* Small helpers                                                       */
@@ -476,72 +481,78 @@ function Catalog() {
         </h2>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3 sm:gap-6 lg:gap-7">
-          {/* Card 1 — TM USC */}
+          {/* Card 1 — TM USC кульові крани */}
           <article>
             <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#4A4D52]">
               <img
-                src={sampleBranded}
-                alt="TM USC — сталева кульова арматура"
+                src={sampleWelded}
+                alt="TM USC — сталева кульова запірна арматура власного виробництва"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <a
-                href="#"
+                href="#full-catalog"
                 className="group/btn absolute bottom-4 right-4 flex items-center overflow-hidden rounded-full bg-white text-gray-900"
               >
                 <span className="flex h-11 w-11 items-center justify-center">
                   <LinkIcon size={16} />
                 </span>
-                <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium transition-all duration-500 group-hover:max-w-[160px] group-hover:pr-5">
-                  Перейти в каталог
+                <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium transition-all duration-500 group-hover:max-w-[180px] group-hover:pr-5">
+                  Дивитися перелік
                 </span>
               </a>
             </div>
             <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              Власна сталева кульова запірна арматура, у т.ч. з приводом
+              Сталеві кульові крани фланцеві, під приварку, муфтові та комбіновані —
+              водне й газове середовище
             </p>
             <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              TM USC
+              TM USC — кульові крани
             </h3>
           </article>
 
-          {/* Card 2 — PROTE */}
+          {/* Card 2 — ШГРП / газове обладнання */}
           <article>
-            <div className="group relative aspect-square overflow-hidden rounded-2xl bg-[#1E7FC2]">
+            <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#F5B915]">
               <img
-                src={zavodProte}
-                alt="PROTE — екологічне обладнання"
+                src={gasCabinet}
+                alt="ШГРП / ГРПШ — шафові газорегуляторні пункти TM USC"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <a
-                href="#"
-                className="group/btn absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-[#4A4D52] py-2.5 pl-4 pr-4 text-[13px] font-medium text-white opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                href="#full-catalog"
+                className="group/btn absolute bottom-4 right-4 flex items-center overflow-hidden rounded-full bg-white text-gray-900"
               >
-                Дивитись каталог
-                <ArrowRight size={16} />
+                <span className="flex h-11 w-11 items-center justify-center">
+                  <LinkIcon size={16} />
+                </span>
+                <span className="max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13px] font-medium transition-all duration-500 group-hover:max-w-[180px] group-hover:pr-5">
+                  Дивитися перелік
+                </span>
               </a>
             </div>
             <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              Обладнання екологічного напряму від партнера PROTE
+              ШГРП/ГРПШ, засувки, фланці, люки, хомути, монтажні ящики та трубні деталі
             </p>
             <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              PROTE
+              Газове та трубопровідне обладнання
             </h3>
           </article>
 
-          {/* Card 3 — Other equipment */}
+          {/* Card 3 — PROTE */}
           <article>
-            <div className="group relative aspect-square overflow-hidden rounded-2xl bg-[#F5B915]">
+            <div className="group relative aspect-[329/246] overflow-hidden rounded-2xl bg-[#1E7FC2]">
               <img
-                src={gasCabinet}
-                alt="Інше обладнання — газові шафи, арматура"
+                src={proteStation}
+                alt="PROTE — станція водопідготовки та захисту від корозії"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
             <p className="mt-4 text-[13px] text-gray-600 sm:text-[14px]">
-              Насоси, фланці, трубні деталі, компенсатори, запобіжна арматура
+              Технології водопідготовки та захисту трубопроводів від корозії й
+              відкладень від партнера PROTE
             </p>
             <h3 className="mt-1 text-[14px] font-semibold text-gray-900 sm:text-[15px]">
-              Інше обладнання
+              PROTE
             </h3>
           </article>
         </div>
@@ -585,8 +596,102 @@ function Catalog() {
             Понад 100 типорозмірів. Повний перелік з тисками та кресленнями — у каталозі.
           </p>
         </div>
+
+        {/* Full assortment — collapsible list (no prices) */}
+        <div id="full-catalog" className="mt-16 scroll-mt-24 sm:mt-20">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 className="text-[20px] font-semibold text-gray-900 sm:text-[24px]">
+                Повний перелік продукції
+              </h3>
+              <p className="mt-1 max-w-[60ch] text-[13px] leading-[1.6] text-gray-600 sm:text-[14px]">
+                Понад 185 позицій у {PRODUCT_CATEGORIES.length} категоріях. Оберіть категорію,
+                щоб розгорнути перелік типорозмірів. Актуальні ціни — за запитом.
+              </p>
+            </div>
+            <a
+              href="/USC-Catalog-2026.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex shrink-0 items-center gap-3 self-start rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
+            >
+              <TextRoll>Завантажити каталог (PDF)</TextRoll>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:translate-y-0.5 sm:h-8 sm:w-8">
+                <Download size={16} className="text-gray-900" />
+              </span>
+            </a>
+          </div>
+
+          <ProductAccordion />
+        </div>
       </div>
     </section>
+  )
+}
+
+/* Collapsible list of the full assortment, grouped by category (no prices) */
+function ProductAccordion() {
+  const [open, setOpen] = useState<Record<string, boolean>>({})
+
+  return (
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+      {PRODUCT_CATEGORIES.map((cat) => {
+        const isOpen = !!open[cat.id]
+        return (
+          <div
+            key={cat.id}
+            className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+          >
+            <button
+              type="button"
+              onClick={() => setOpen((s) => ({ ...s, [cat.id]: !s[cat.id] }))}
+              aria-expanded={isOpen}
+              className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-gray-50 sm:px-6 sm:py-5"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-[15px] font-semibold text-gray-900 sm:text-[16px]">
+                    {cat.name}
+                  </h4>
+                  <span className="shrink-0 rounded-full bg-[#1E7FC2]/10 px-2 py-0.5 text-[11px] font-semibold text-[#1E7FC2]">
+                    {cat.items.length}
+                  </span>
+                </div>
+                <p className="mt-1 text-[13px] leading-[1.5] text-gray-600">{cat.blurb}</p>
+              </div>
+              <ChevronDown
+                size={20}
+                className={`shrink-0 text-gray-400 transition-transform duration-300 ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            {isOpen && (
+              <div className="border-t border-gray-100 px-5 pb-5 pt-4 sm:px-6">
+                <ul className="grid grid-cols-1 gap-x-6 gap-y-2">
+                  {cat.items.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 text-[13px] leading-[1.5] text-gray-700"
+                    >
+                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#1E7FC2]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                {cat.note && (
+                  <p className="mt-4 flex items-start gap-2 text-[12px] leading-[1.5] text-gray-500">
+                    <Gauge size={14} className="mt-0.5 shrink-0 text-[#1E7FC2]" />
+                    {cat.note}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
@@ -782,30 +887,38 @@ function ContactsSection() {
 
         {/* Contacts */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
-          <a
-            href="tel:+380000000000"
-            className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
-          >
+          <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
             <Phone size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Телефон</span>
-            <span className="text-[15px] font-semibold text-gray-900">
-              +38 (0__) ___-__-__
-            </span>
-          </a>
+            <a
+              href="tel:+380963235506"
+              className="text-[15px] font-semibold text-gray-900 transition-colors hover:text-[#1E7FC2]"
+            >
+              +38 (096) 323-55-06
+            </a>
+            <a
+              href="tel:+380504811035"
+              className="text-[15px] font-semibold text-gray-900 transition-colors hover:text-[#1E7FC2]"
+            >
+              +38 (050) 481-10-35
+            </a>
+          </div>
           <a
-            href="mailto:info@usc-pro.com.ua"
+            href="mailto:yskpro@ukr.net"
             className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
           >
             <Mail size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Email</span>
             <span className="text-[15px] font-semibold text-gray-900">
-              info@usc-pro.com.ua
+              yskpro@ukr.net
             </span>
           </a>
           <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
             <MapPin size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Адреса</span>
-            <span className="text-[15px] font-semibold text-gray-900">Україна</span>
+            <span className="text-[15px] font-semibold text-gray-900">
+              03151, м. Київ, вул. Волинська, 48/50, офіс 516
+            </span>
           </div>
           <a
             href={FACEBOOK_URL}
@@ -838,7 +951,7 @@ function Footer() {
           </span>
         </div>
         <span className="text-[12px] text-gray-400">
-          © {new Date().getFullYear()} ЮСК.ПРО. Усі права захищені.
+          © {new Date().getFullYear()} ТОВ «ЮСК.ПРО» (ЄДРПОУ 46315118). Усі права захищені.
         </span>
       </div>
     </footer>
