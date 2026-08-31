@@ -6,6 +6,7 @@ import {
   Menu,
   X,
   Facebook,
+  Instagram,
   Upload,
   FileText,
   CheckCircle2,
@@ -23,11 +24,14 @@ import {
 import { PRODUCT_CATEGORIES } from './products'
 
 const FACEBOOK_URL = 'https://www.facebook.com/' // TODO: replace with the real USC page URL
+const INSTAGRAM_URL = 'https://www.instagram.com/' // TODO: replace with the real USC page URL
+const PHONE_TEL = '+380963235506'
 
 import zavodBalls from './assets/zavod1.jpg'
 import zavodProte from './assets/zavod.jpg'
 import uscLogo from './assets/usc-logo.jpg'
 import proteStation from './assets/prote-station.jpg'
+import uscLogoMark from './assets/usc-logo-mark.png'
 
 /* ------------------------------------------------------------------ */
 /* Small helpers                                                       */
@@ -166,15 +170,6 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
             {time} Київ
           </span>
           <a
-            href={FACEBOOK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#1E7FC2]"
-          >
-            <Facebook size={18} />
-          </a>
-          <a
             href="#"
             className="group flex items-center gap-3 rounded-full bg-[#4A4D52] py-2 pl-5 pr-2 text-[13px] font-medium text-white"
           >
@@ -276,8 +271,20 @@ function Hero() {
       <Nav onOpenMenu={() => setMenuOpen(true)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
+      {/* Brand mark centred in the open space, blended into the background */}
+      <div className="pointer-events-none relative z-10 flex flex-1 items-center justify-center px-6">
+        <div className="usc-hero-mark w-[52%] max-w-[285px] sm:w-[33%] sm:max-w-[345px]">
+          <img
+            src={uscLogoMark}
+            alt="USC — Ukrainian Santechnical Company"
+            className="w-full object-contain"
+          />
+          <span className="usc-flame-glow" aria-hidden="true" />
+        </div>
+      </div>
+
       {/* Content pinned to bottom */}
-      <div className="relative z-20 mt-auto w-full">
+      <div className="relative z-20 w-full">
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-14 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
           <p className="mb-5 text-[13px] tracking-wide text-gray-900 sm:mb-8 sm:text-[14px]">
             USC — Ukrainian Santechnical Company
@@ -852,9 +859,34 @@ function Footer() {
 /* App                                                                 */
 /* ------------------------------------------------------------------ */
 
+/* Fixed vertical social rail — stays in place while scrolling */
+function SocialRail() {
+  const items = [
+    { href: `tel:${PHONE_TEL}`, label: 'Зателефонувати', Icon: Phone, external: false },
+    { href: INSTAGRAM_URL, label: 'Instagram', Icon: Instagram, external: true },
+    { href: FACEBOOK_URL, label: 'Facebook', Icon: Facebook, external: true },
+  ]
+  return (
+    <div className="fixed right-2.5 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-2 sm:right-4 sm:gap-2.5">
+      {items.map(({ href, label, Icon, external }) => (
+        <a
+          key={label}
+          href={href}
+          aria-label={label}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1E7FC2] shadow-[0_2px_10px_rgba(0,0,0,0.12)] transition-all hover:bg-[#1E7FC2] hover:text-white sm:h-11 sm:w-11"
+        >
+          <Icon size={18} />
+        </a>
+      ))}
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <main>
+      <SocialRail />
       <Hero />
       <About />
       <Catalog />
