@@ -1,31 +1,155 @@
 // AUTO-GENERATED from Роздрібний_прайс_ЮСК.ПРО_2026.xls (prices intentionally omitted).
+export type ProductSize = { dn: number; pn: number; code?: string }
+export type ProductVariant = { label: string; sizes: ProductSize[] }
+export type ProductType = {
+  id: string
+  name: string
+  blurb?: string
+  variants: ProductVariant[]
+}
 export type ProductCategory = {
   id: string
   name: string
   blurb: string
   note?: string
-  items: string[]
+  /** Flat list of typo-sizes (used when the category has no `types`). */
+  items?: string[]
+  /** When present, the category is rendered as connection-type cards, each
+   *  opening the full list of available sizes for that type. */
+  types?: ProductType[]
 }
+
+/* ---- Ball-valve size tables (КАТАЛОГ USC 2026; prices omitted) ---------- */
+const p3 = (n: number) => String(n).padStart(3, '0')
+
+/** Article code:  К.К.<Ф|П|М>.<DN>.<PN>.<СП|ПП>.<0|3>02<suffix>
+ *  Management digit 3 = with reduction gear (large diameters), else 0. */
+function mkSizes(
+  prefix: string,
+  prohid: 'СП' | 'ПП',
+  reductorFrom: number,
+  rows: [number, number][],
+  suffix = '',
+): ProductSize[] {
+  return rows.map(([dn, pn]) => ({
+    dn,
+    pn,
+    code: `${prefix}.${p3(dn)}.${p3(pn)}.${prohid}.${dn >= reductorFrom ? '3' : '0'}02${suffix}`,
+  }))
+}
+
+const FLANGED_ROWS: [number, number][] = [
+  [15, 40], [20, 40], [25, 40], [32, 40], [40, 40], [50, 40],
+  [65, 16], [65, 25], [80, 16], [80, 25], [100, 16], [100, 25],
+  [125, 16], [125, 25], [150, 16], [150, 25], [200, 16], [200, 25],
+  [250, 16], [250, 25], [300, 16], [300, 25], [350, 16], [350, 25],
+  [400, 16], [400, 25], [500, 16], [500, 25], [600, 16], [700, 16],
+]
+
+const WELDED_ROWS: [number, number][] = [
+  [15, 40], [20, 40], [25, 40], [32, 40], [40, 40], [50, 40],
+  [65, 25], [80, 25], [100, 25], [125, 25], [150, 25], [200, 25],
+  [250, 25], [300, 25], [350, 25], [400, 25], [500, 25], [600, 25],
+]
+
+const MUFFLE_ROWS: [number, number][] = [
+  [15, 40], [20, 40], [25, 40], [32, 40], [40, 40], [50, 40],
+]
+
+const UNDERGROUND_SP_ROWS: [number, number][] = [
+  [25, 40], [32, 40], [40, 40], [50, 40], [65, 25], [80, 25],
+  [100, 25], [125, 25], [150, 25], [200, 25], [250, 25], [300, 25],
+  [350, 25], [400, 25], [500, 25], [600, 25],
+]
+
+const UNDERGROUND_PP_ROWS: [number, number][] = [
+  [25, 40], [32, 40], [40, 40], [50, 40], [65, 25], [80, 25],
+  [100, 25], [125, 25], [150, 25], [200, 25], [250, 25], [300, 25],
+  [350, 25], [400, 25], [500, 25],
+]
+
+const COMBINED_SIZES: ProductSize[] = [
+  { dn: 15, pn: 40, code: 'К.К.К.015.040.СП.02' },
+  { dn: 20, pn: 40, code: 'К.К.К.020.040.СП.02' },
+  { dn: 25, pn: 40, code: 'К.К.К.025.040.СП.02' },
+  { dn: 32, pn: 40, code: 'К.К.К.032.040.СП.02' },
+  { dn: 40, pn: 40, code: 'К.К.К.040.040.СП.02' },
+  { dn: 50, pn: 40, code: 'К.К.К.050.040.СП.02' },
+  { dn: 65, pn: 16, code: 'К.К.К.065.016.СП.02' },
+  { dn: 65, pn: 25, code: 'К.К.К.065.025.СП.02' },
+  { dn: 80, pn: 16, code: 'К.К.К.080/070.016.СП.02' },
+  { dn: 80, pn: 25, code: 'К.К.К.080/070.025.СП.02' },
+  { dn: 100, pn: 16, code: 'К.К.К.100/080.016.СП.02' },
+  { dn: 100, pn: 25, code: 'К.К.К.100/080.025.СП.02' },
+  { dn: 125, pn: 16, code: 'К.К.К.125/100.016.СП.02' },
+  { dn: 125, pn: 25, code: 'К.К.К.125/100.025.СП.02' },
+  { dn: 150, pn: 16, code: 'К.К.К.150/125.016.СП.02' },
+  { dn: 150, pn: 25, code: 'К.К.К.150/125.025.СП.02' },
+  { dn: 200, pn: 16, code: 'К.К.К.200/150.016.СП.02' },
+  { dn: 200, pn: 25, code: 'К.К.К.200/150.025.СП.02' },
+  { dn: 250, pn: 16, code: 'К.К.К.250/200.016.СП.02' },
+  { dn: 250, pn: 25, code: 'К.К.К.250/200.025.СП.02' },
+]
+
+const BALL_VALVE_TYPES: ProductType[] = [
+  {
+    id: 'flanged',
+    name: 'Фланцеве приєднання',
+    blurb:
+      'Кран кульовий сталевий (P235GH), фланцеве приєднання. Завужений або повний прохід, DN15–700, PN16–PN40.',
+    variants: [
+      { label: 'Завужений прохід', sizes: mkSizes('К.К.Ф', 'СП', 300, FLANGED_ROWS) },
+      { label: 'Повний прохід', sizes: mkSizes('К.К.Ф', 'ПП', 200, FLANGED_ROWS) },
+    ],
+  },
+  {
+    id: 'welded',
+    name: 'Приварне приєднання',
+    blurb:
+      'Кран кульовий сталевий під приварку. Завужений або повний прохід, DN15–600, PN25–PN40.',
+    variants: [
+      { label: 'Завужений прохід', sizes: mkSizes('К.К.П', 'СП', 300, WELDED_ROWS) },
+      { label: 'Повний прохід', sizes: mkSizes('К.К.П', 'ПП', 250, WELDED_ROWS) },
+    ],
+  },
+  {
+    id: 'muffled',
+    name: 'Муфтове приєднання',
+    blurb:
+      'Кран кульовий сталевий, різьбове (муфтове) приєднання. Завужений або повний прохід, DN15–50, PN40.',
+    variants: [
+      { label: 'Завужений прохід', sizes: mkSizes('К.К.М', 'СП', 9999, MUFFLE_ROWS) },
+      { label: 'Повний прохід', sizes: mkSizes('К.К.М', 'ПП', 9999, MUFFLE_ROWS) },
+    ],
+  },
+  {
+    id: 'combined',
+    name: 'Комбіноване приєднання',
+    blurb:
+      'Кран кульовий сталевий, комбіноване приєднання (фланець / приварка). DN15–250, PN16–PN40.',
+    variants: [{ label: '', sizes: COMBINED_SIZES }],
+  },
+  {
+    id: 'underground',
+    name: 'Для підземного встановлення',
+    blurb:
+      'Кран кульовий приварний із подовженим шпинделем для підземного встановлення. DN25–600. Виготовлення під замовлення.',
+    variants: [
+      { label: 'Завужений прохід', sizes: mkSizes('К.К.П', 'СП', 250, UNDERGROUND_SP_ROWS, '.Н') },
+      { label: 'Повний прохід', sizes: mkSizes('К.К.П', 'ПП', 200, UNDERGROUND_PP_ROWS, '.Н') },
+    ],
+  },
+]
 
 export const PRODUCT_CATEGORIES: ProductCategory[] = [
   {
     id: "ball-valves",
-    name: "Крани кульові фланцеві",
-    blurb: "Сталеві кульові запірні крани, фланцеві, стандартний прохід (11с33п), Pn16.",
-    items: [
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn15/10 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn20/15 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn25/20 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn32/25 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn40/32 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn50/40 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn65/50 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn80/65 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn100/80 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn125/100 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn150/125 Pn16",
-      "Кран запірний кул стал. фланцевий СП 11с33п Dn200/150 Pn16",
-    ],
+    name: "Крани кульові USC",
+    blurb:
+      "Сталеві кульові запірні крани власного виробництва TM USC — фланцеві, приварні, муфтові, комбіновані та для підземного встановлення. Для тепломережевої води, природного газу й нафтопродуктів. DN15–700, PN16–PN40.",
+    note:
+      "Корпус — сталь P235GH; куля — нержавіюча сталь AISI 304. Температура середовища −40…+200 °C, ресурс 30 років. Великі діаметри — з редуктором за замовчуванням.",
+    types: BALL_VALVE_TYPES,
   },
   {
     id: "shgrp",
