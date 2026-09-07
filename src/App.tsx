@@ -15,7 +15,6 @@ import {
   Mail,
   MapPin,
   Gauge,
-  Download,
 } from 'lucide-react'
 
 import { PRODUCT_CATEGORIES, type ProductCategory, type ProductType } from './products'
@@ -34,6 +33,7 @@ import zavodBalls from './assets/zavod1.jpg'
 import zavodProte from './assets/zavod.jpg'
 import uscLogo from './assets/usc-logo.jpg'
 import proteStation from './assets/prote-station.jpg'
+import proteLogo from './assets/prote-logo.png'
 import uscLogoMark from './assets/usc-logo-mark.png'
 
 /* ------------------------------------------------------------------ */
@@ -449,30 +449,17 @@ function Catalog() {
 
         {/* Full assortment — single unified list (no prices) */}
         <div id="full-catalog" className="scroll-mt-24">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="max-w-[68ch] text-[15px] leading-[1.7] text-gray-600 sm:text-[16px]">
-                Повний асортимент трубопровідної та запірної арматури, газового й
-                монтажного обладнання — від кульових кранів власного виробництва TM USC
-                до засувок, фланців, люків, хомутів і трубних деталей.{' '}
-                <span className="font-medium text-gray-900">
-                  Понад 185 позицій у {PRODUCT_CATEGORIES.length} категоріях.
-                </span>{' '}
-                Оберіть категорію та товар, щоб побачити доступні типорозміри. Актуальні
-                ціни — за запитом.
-              </p>
-            </div>
-            <a
-              href="/USC-Catalog-2026.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex shrink-0 items-center gap-3 self-start rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
-            >
-              <TextRoll>Завантажити каталог (PDF)</TextRoll>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:translate-y-0.5 sm:h-8 sm:w-8">
-                <Download size={16} className="text-gray-900" />
-              </span>
-            </a>
+          <div className="mb-8">
+            <p className="max-w-[68ch] text-[15px] leading-[1.7] text-gray-600 sm:text-[16px]">
+              Повний асортимент трубопровідної та запірної арматури, газового й
+              монтажного обладнання — від кульових кранів власного виробництва TM USC
+              до засувок, фланців, люків, хомутів і трубних деталей.{' '}
+              <span className="font-medium text-gray-900">
+                Понад 185 позицій у {PRODUCT_CATEGORIES.length} категоріях.
+              </span>{' '}
+              Оберіть категорію та товар, щоб побачити доступні типорозміри. Актуальні
+              ціни — за запитом.
+            </p>
           </div>
 
           <ProductShop />
@@ -495,6 +482,11 @@ function Catalog() {
               />
             </div>
             <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+              <img
+                src={proteLogo}
+                alt="PROTE"
+                className="mb-4 h-16 w-auto object-contain sm:h-20"
+              />
               <h3 className="text-[18px] font-semibold text-gray-900 sm:text-[22px]">
                 PROTE
               </h3>
@@ -598,7 +590,16 @@ function ProductShop() {
                   className="group flex flex-col overflow-hidden rounded-2xl bg-white text-left shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
                 >
                   <span className="flex aspect-square items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
-                    <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
+                    {t.image ? (
+                      <img
+                        src={t.image}
+                        alt={t.name}
+                        loading="lazy"
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
+                    )}
                   </span>
                   <span className="flex flex-1 flex-col p-3 sm:p-4">
                     <span className="text-[13px] font-semibold leading-[1.35] text-gray-900 sm:text-[14px]">
@@ -623,6 +624,7 @@ function ProductShop() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
             {(active.items ?? []).map((it, i) => {
               const key = `${active.id}-${i}`
+              const itImg = active.itemImages?.[it] ?? active.image
               return (
                 <button
                   key={key}
@@ -631,7 +633,16 @@ function ProductShop() {
                   className="group flex flex-col overflow-hidden rounded-2xl bg-white text-left shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
                 >
                   <span className="flex aspect-square items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
-                    <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
+                    {itImg ? (
+                      <img
+                        src={itImg}
+                        alt={it}
+                        loading="lazy"
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
+                    )}
                   </span>
                   <span className="flex flex-1 flex-col p-3 sm:p-4">
                     <span className="line-clamp-3 text-[12.5px] font-medium leading-[1.4] text-gray-800 sm:text-[13px]">
@@ -699,7 +710,19 @@ function ProductModal({
           <X size={18} />
         </button>
         <div className="flex aspect-[4/3] items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-          <ValveMark className="h-16 w-16 fill-current text-[#1E7FC2]/25" />
+          {(() => {
+            const img = product.cat.itemImages?.[product.item] ?? product.cat.image
+            return img ? (
+              <img
+                src={img}
+                alt={product.item}
+                loading="lazy"
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <ValveMark className="h-16 w-16 fill-current text-[#1E7FC2]/25" />
+            )
+          })()}
         </div>
         <div className="p-5 sm:p-6">
           <span className="text-[12px] font-medium text-[#1E7FC2]">{product.cat.name}</span>
