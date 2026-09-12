@@ -10,6 +10,14 @@
  * up in the "Інше" bucket, so a regenerated price list degrades gracefully.
  */
 import type { ProductCategory } from './products'
+/* Product photos recovered from the client's own price-list workbook. */
+import vidvidKovanyy from './assets/vidvid-kovanyy.png'
+import muftaStalna from './assets/mufta-stalna.png'
+import zgin from './assets/zgin.png'
+import rizbaKorotka from './assets/rizba-korotka.png'
+import rizbaDovga from './assets/rizba-dovga.png'
+import rizbaDvostoronnya from './assets/rizba-dvostoronnya.png'
+import perehidManometr from './assets/perehid-manometr.png'
 
 export type ProductGroup = {
   id: string
@@ -41,6 +49,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'vidvid-kovanyy',
     name: 'Відвід кований',
+    image: vidvidKovanyy,
     blurb:
       'Відвід сталевий кований 90° для різьбових з’єднань трубопроводів. Використовується для зміни напрямку траси у системах водо- і газопостачання та опалення. Постачається упаковками.',
     columns: ['Діаметр d, мм', 'Товщина стінки, мм', 'Упаковка, шт.'],
@@ -53,6 +62,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'mufta-stalna',
     name: 'Муфта стальна',
+    image: muftaStalna,
     blurb:
       'Муфта сталева різьбова для з’єднання двох труб в один прямий відрізок. Виготовляється за ГОСТ 8966-75 та у скорочених виконаннях. Ду15–Ду80.',
     columns: ['Ду', 'Довжина L, мм', 'Товщина стінки, мм', 'Стандарт'],
@@ -65,6 +75,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'zgin',
     name: 'Згін',
+    image: zgin,
     blurb:
       'Згін сталевий — короткий відрізок труби з довгою та короткою різьбою, що дає змогу розібрати з’єднання без різання труби. Комплектується у складі згін-муфта-контргайка. d15–d80.',
     columns: ['Діаметр d, мм', 'Довжина L, мм', 'Упаковка, шт.'],
@@ -77,6 +88,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'rizba-dvostoronnya',
     name: 'Різьба двухстороння (бочата)',
+    image: rizbaDvostoronnya,
     blurb:
       'Двостороння різьба (бочата) — короткий патрубок із зовнішньою різьбою з обох боків для з’єднання двох муфтових елементів. d15–d80.',
     columns: ['Діаметр d, мм', 'Довжина L, мм'],
@@ -89,6 +101,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'rizba-dovga',
     name: 'Різьба довга',
+    image: rizbaDovga,
     blurb:
       'Довга різьба (сгінна) — патрубок із подовженою зовнішньою різьбою, що дозволяє «набігти» муфтою й розібрати вузол. d15–d80.',
     columns: ['Діаметр d, мм', 'Довжина L, мм', 'Упаковка, шт.'],
@@ -101,6 +114,7 @@ const BENDS_RULES: Rule[] = [
   {
     id: 'rizba',
     name: 'Різьба коротка',
+    image: rizbaKorotka,
     blurb:
       'Коротка різьба — патрубок із зовнішньою різьбою для приєднання арматури до трубопроводу. d15–d80.',
     columns: ['Діаметр d, мм', 'Довжина L, мм', 'Упаковка, шт.'],
@@ -116,6 +130,7 @@ const REDUCERS_RULES: Rule[] = [
   {
     id: 'perehid-manometr',
     name: 'Перехід під манометр',
+    image: perehidManometr,
     blurb:
       'Перехідник для встановлення манометра, коли різьба приладу не збігається з різьбою бобишки або відбірного пристрою. Метричні та трубні різьби, внутрішні та зовнішні.',
     columns: ['Приєднання 1', 'Приєднання 2'],

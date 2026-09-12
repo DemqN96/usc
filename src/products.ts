@@ -10,6 +10,9 @@ import lyukReviziynyyA50 from './assets/lyuk-reviziynyy-a50.png'
 import reshitkaV125 from './assets/reshitka-v125.png'
 import stovpchykA15 from './assets/stovpchyk-a15.png'
 import khomutOdnostoronniy from './assets/khomut-odnostoronniy.png'
+import khomutDvostoronniy from './assets/khomut-dvostoronniy.png'
+import reshitkaA15 from './assets/reshitka-a15.png'
+import lyukKruglyyV125 from './assets/lyuk-kruglyy-v125.png'
 import shrpDviLinii from './assets/shrp-dvi-linii.jpg'
 import shrpOdnaLiniya from './assets/shrp-odna-liniya.jpg'
 import zasuvkaFlancevaChavunna from './assets/zasuvka-flanceva-chavunna.jpg'
@@ -247,6 +250,11 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
       "ЛЮК КВАДРАТНИЙ КЛАС А15 — 650*650*60 мм": lyukKvadratnyyA15,
       "ЛЮК РЕВІЗІЙНИЙ КЛАС А50 — 385*385*60 мм": lyukReviziynyyA50,
       "РЕШІТКА КЛАС В125 — 790/810*400*80 мм": reshitkaV125,
+      "РЕШІТКА КЛАС А15 — 650/665*340*80 мм": reshitkaA15,
+      "РЕШІТКА КЛАС А15 — 1000*310*60 мм": reshitkaA15,
+      "РЕШІТКА КЛАС А15 — 1000*500*60 мм": reshitkaA15,
+      "ЛЮК СЕРЕДНІЙ КЛАС В125 — 830*130 мм": lyukKruglyyV125,
+      "ЛЮК ВАЖКИЙ КЛАС С250 — 830*130 мм": lyukKruglyyV125,
       "СТОВПЧИК КЛАС А15 — 700*60 мм": stovpchykA15,
     },
   },
@@ -261,6 +269,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
     ],
     itemImages: {
       "Односторонні хомути L150–400 мм — DN 56…410 мм": khomutOdnostoronniy,
+      "Двосторонні хомути L300–400 мм — DN 269…640 мм": khomutDvostoronniy,
     },
   },
   {
