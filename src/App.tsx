@@ -3,7 +3,7 @@ import { Shader, Swirl, ChromaFlow, FlutedGlass, FilmGrain } from 'shaders/react
 import {
   Clock,
   ArrowRight,
-  Menu,
+  ArrowUpRight,
   X,
   Facebook,
   Instagram,
@@ -138,10 +138,50 @@ const NAV_LINKS = [
   { label: 'Сертифікати та контакти', href: '#contacts' },
 ]
 
-function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
+/** Burger that morphs into a close icon. Three bars: the outer two rotate
+ *  into an X while the middle one collapses. */
+function BurgerButton({
+  open,
+  onClick,
+}: {
+  open: boolean
+  onClick: () => void
+}) {
+  const bar =
+    'absolute left-1/2 h-[1.5px] -translate-x-1/2 rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]'
+  return (
+    <button
+      onClick={onClick}
+      aria-label={open ? 'Закрити меню' : 'Відкрити меню'}
+      aria-expanded={open}
+      aria-controls="mobile-menu"
+      className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#4A4D52] text-white transition-transform duration-300 active:scale-90 lg:hidden"
+    >
+      <span className="relative block h-[18px] w-[18px]">
+        <span
+          className={`${bar} w-[18px] ${open ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-[3px]'}`}
+        />
+        <span
+          className={`${bar} top-1/2 -translate-y-1/2 ${open ? 'w-0 opacity-0' : 'w-[12px] opacity-100'}`}
+        />
+        <span
+          className={`${bar} w-[18px] ${open ? 'top-1/2 -translate-y-1/2 -rotate-45' : 'top-[13px]'}`}
+        />
+      </span>
+    </button>
+  )
+}
+
+function Nav({
+  menuOpen,
+  onToggleMenu,
+}: {
+  menuOpen: boolean
+  onToggleMenu: () => void
+}) {
   const time = useKyivTime()
   return (
-    <div className="relative z-20 mx-auto w-full max-w-[1440px] px-3 pt-3 sm:px-6 sm:pt-6">
+    <div className="relative z-[60] mx-auto w-full max-w-[1440px] px-3 pt-3 sm:px-6 sm:pt-6">
       <nav className="flex items-center justify-between rounded-full bg-white p-2 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:p-3">
         {/* Left: logo + links */}
         <div className="flex items-center gap-6">
@@ -185,13 +225,7 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
         </div>
 
         {/* Mobile toggle */}
-        <button
-          onClick={onOpenMenu}
-          aria-label="Меню"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4A4D52] text-white lg:hidden"
-        >
-          <Menu size={18} />
-        </button>
+        <BurgerButton open={menuOpen} onClick={onToggleMenu} />
       </nav>
     </div>
   )
@@ -199,65 +233,110 @@ function Nav({ onOpenMenu }: { onOpenMenu: () => void }) {
 
 function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const time = useKyivTime()
+
+  /* Esc to close + lock the page behind the sheet while it is open */
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open, onClose])
+
   if (!open) return null
+
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="animate-slide-up absolute inset-x-0 bottom-0 mx-3 mb-3 rounded-2xl bg-white p-5">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+    <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+      <div
+        className="animate-menu-fade absolute inset-0 bg-gray-900/50 backdrop-blur-[3px]"
+        onClick={onClose}
+      />
+
+      <div
+        id="mobile-menu"
+        className="animate-slide-up absolute inset-x-0 bottom-0 mx-2 mb-2 overflow-hidden rounded-[26px] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_40px_rgba(0,0,0,0.22)]"
+      >
+        {/* Grab handle — signals the sheet is dismissible */}
+        <div className="flex justify-center pb-1 pt-3">
+          <span className="h-1 w-10 rounded-full bg-gray-200" />
+        </div>
+
+        <div className="px-5 pb-5">
+          <div
+            className="menu-row mb-1 flex items-center gap-3"
+            style={{ animationDelay: '40ms' }}
+          >
             <img
               src={uscLogo}
               alt="USC — Ukrainian Santechnical Company"
-              className="h-9 w-9 rounded-full object-cover"
+              className="h-8 w-8 rounded-full object-cover"
             />
-            <span className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[13px] text-gray-600">
-              <Clock size={14} />
+            <span className="flex items-center gap-1.5 text-[12px] text-gray-500">
+              <Clock size={13} />
               {time} Київ
             </span>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Закрити"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4A4D52] text-white"
-          >
-            <X size={18} />
-          </button>
-        </div>
-        <ul className="mb-6 space-y-3">
-          {NAV_LINKS.map((l) => (
-            <li key={l.label}>
-              <a
-                href={l.href}
-                onClick={onClose}
-                className="block text-[28px] font-medium leading-[32px] text-gray-900"
+
+          <ul className="mb-5">
+            {NAV_LINKS.map((l, i) => (
+              <li
+                key={l.label}
+                className="menu-row border-b border-gray-100 last:border-b-0"
+                style={{ animationDelay: `${90 + i * 55}ms` }}
               >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <a
-          href="#catalog"
-          onClick={onClose}
-          className="group flex items-center justify-between rounded-full bg-[#F5B915] py-3 pl-6 pr-3 text-[15px] font-medium text-gray-900"
-        >
-          Перейти до каталогу
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
-            <ArrowRight size={16} className="text-gray-900" />
-          </span>
-        </a>
-        {FACEBOOK_URL && (
-          <a
-            href={FACEBOOK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 flex items-center justify-center gap-2 text-[14px] font-medium text-gray-600"
+                <a
+                  href={l.href}
+                  onClick={onClose}
+                  className="group flex items-baseline gap-3 py-3.5 active:opacity-60"
+                >
+                  <span className="w-[22px] shrink-0 text-[11px] font-semibold tabular-nums text-gray-300">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="flex-1 text-[clamp(21px,5.8vw,26px)] font-medium leading-[1.15] tracking-[-0.01em] text-gray-900">
+                    {l.label}
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    className="shrink-0 self-center text-gray-300 transition-colors group-active:text-[#1E7FC2]"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div
+            className="menu-row flex items-center gap-2.5"
+            style={{ animationDelay: `${90 + NAV_LINKS.length * 55}ms` }}
           >
-            <Facebook size={18} />
-            Facebook
-          </a>
-        )}
+            <a
+              href="#catalog"
+              onClick={onClose}
+              className="group flex flex-1 items-center justify-between rounded-full bg-[#F5B915] py-3 pl-5 pr-2.5 text-[15px] font-medium text-gray-900 transition-transform active:scale-[0.98]"
+            >
+              Перейти до каталогу
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
+                <ArrowRight size={16} className="text-gray-900" />
+              </span>
+            </a>
+            {FACEBOOK_URL && (
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors active:bg-gray-200"
+              >
+                <Facebook size={18} />
+              </a>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -274,7 +353,7 @@ function Hero() {
       <ShaderBoundary>
         <HeroShaders />
       </ShaderBoundary>
-      <Nav onOpenMenu={() => setMenuOpen(true)} />
+      <Nav menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
       {/* Brand mark centred in the open space, blended into the background */}
