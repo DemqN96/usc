@@ -32,7 +32,8 @@ import {
 import zavodBalls from './assets/zavod1.jpg'
 import zavodProte from './assets/zavod.jpg'
 import uscLogo from './assets/usc-logo.jpg'
-import proteStation from './assets/prote-station.jpg'
+import proteForest from './assets/prote-forest.jpg'
+import proteWordmark from './assets/prote-wordmark.png'
 import proteLogo from './assets/prote-logo.png'
 import uscLogoMark from './assets/usc-logo-mark.png'
 
@@ -436,6 +437,48 @@ function About() {
 /* Section 3 — Catalog                                                 */
 /* ------------------------------------------------------------------ */
 
+/** PROTE partner line — USC is the exclusive representative in Ukraine.
+ *  Source: PROTE presentations (USC-Prote-вода, PROTE-POS_EN333, PROTEP). */
+const PROTE_TECHNOLOGIES = [
+  {
+    name: 'PROTE-QUEST',
+    tag: 'Кондиціювання води',
+    desc: 'Усунення осадів і корозійних відкладень у водопровідних мережах та захист від вторинного забруднення питної води.',
+  },
+  {
+    name: 'PROTE-POS',
+    tag: 'Переробка осаду',
+    desc: 'Перетворення осаду стічних вод на мінерально-органічне добриво з адаптивним складом (азот, фосфор, калій).',
+  },
+  {
+    name: 'PROTE-MOS',
+    tag: 'Мінімізація осаду',
+    desc: 'Технологія мінімізації та модифікації кількості осаду на очисних спорудах.',
+  },
+  {
+    name: 'PROTE-FOS',
+    tag: 'Рекультивація озер',
+    desc: 'Комплексні дослідження та відновлення (рекультивація) озер і водойм.',
+  },
+  {
+    name: 'SYMBIO',
+    tag: 'Біомоніторинг',
+    desc: 'Система біомоніторингу якості води для безперервного контролю стану водного середовища.',
+  },
+  {
+    name: 'TIB',
+    tag: 'Екологічна ремедіація',
+    desc: 'Оцінка стану та ремедіація ґрунтового й водного середовища, зокрема від нафтопродуктів.',
+  },
+]
+
+const PROTE_STATS = [
+  { value: '120', label: 'підприємств водопостачання' },
+  { value: '20 000 км', label: 'водопровідних мереж' },
+  { value: '3 000 т/рік', label: 'осаду на один модуль' },
+  { value: 'з 1995', label: 'років досвіду PROTE' },
+]
+
 function Catalog() {
   return (
     <section id="catalog" className="bg-[#F5F5F5] pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
@@ -473,30 +516,90 @@ function Catalog() {
             </span>
             <span className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
           </div>
-          <article className="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] md:grid-cols-2">
-            <div className="relative aspect-[16/10] overflow-hidden bg-[#1E7FC2] md:aspect-auto">
-              <img
-                src={proteStation}
-                alt="PROTE — станція водопідготовки та захисту від корозії"
-                className="h-full w-full object-cover"
-              />
+          <article className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+            {/* Partner cover — PROTE brand visual */}
+            <div className="relative">
+              <div className="h-[150px] w-full overflow-hidden sm:h-[210px] lg:h-[240px]">
+                <img
+                  src={proteForest}
+                  alt="PROTE — технології для захисту довкілля"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              {/* USC mark × PROTE wordmark meeting on the cover edge */}
+              <div className="absolute -bottom-8 left-5 flex items-end gap-3 sm:-bottom-9 sm:left-8 sm:gap-4">
+                <span className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full bg-white shadow-[0_6px_20px_rgba(0,0,0,0.12)] ring-1 ring-black/5 sm:h-[92px] sm:w-[92px]">
+                  <img
+                    src={proteLogo}
+                    alt="USC — Ukrainian Santechnical Company"
+                    className="h-[60px] w-[60px] object-contain sm:h-[74px] sm:w-[74px]"
+                  />
+                </span>
+                <img
+                  src={proteWordmark}
+                  alt="PROTE"
+                  className="h-[24px] w-auto object-contain sm:h-[30px]"
+                />
+              </div>
             </div>
-            <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-              <img
-                src={proteLogo}
-                alt="PROTE"
-                className="mb-4 h-16 w-auto object-contain sm:h-20"
-              />
-              <h3 className="text-[18px] font-semibold text-gray-900 sm:text-[22px]">
-                PROTE
-              </h3>
-              <p className="mt-3 max-w-[52ch] text-[14px] leading-[1.7] text-gray-600 sm:text-[15px]">
-                Технології водопідготовки та захисту трубопроводів від корозії й
-                відкладень від партнера PROTE. Рішення для промислових і комунальних
-                систем водопостачання та теплопостачання.
+
+            <div className="px-5 pb-6 pt-14 sm:px-8 sm:pb-8 sm:pt-16 lg:px-10 lg:pb-10">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#1E7FC2]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#1E7FC2] sm:text-[11px]">
+                <ShieldCheck size={13} className="shrink-0" />
+                Ексклюзивний представник в Україні
+              </span>
+              <p className="mt-4 max-w-[70ch] text-[14px] leading-[1.7] text-gray-600 sm:text-[15px]">
+                Ми — USC, ексклюзивний партнер{' '}
+                <span className="font-medium text-gray-900">
+                  PROTE Technologies for our Environment LLC
+                </span>{' '}
+                (Польща) в Україні. Понад 30 років PROTE розробляє технології, які
+                повертають воді чистоту, а осаду — цінність. Ми приводимо ці рішення
+                на українські водоканали, комунальні та промислові об’єкти: від
+                обстеження до запуску під ключ.
               </p>
+              <dl className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 sm:mt-8 sm:grid-cols-4">
+                {PROTE_STATS.map((s) => (
+                  <div key={s.label}>
+                    <dt className="text-[20px] font-semibold leading-none text-gray-900 sm:text-[24px]">
+                      {s.value}
+                    </dt>
+                    <dd className="mt-1.5 text-[11px] leading-[1.4] text-gray-500 sm:text-[12px]">
+                      {s.label}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </article>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PROTE_TECHNOLOGIES.map((t) => (
+              <article
+                key={t.name}
+                className="rounded-2xl bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] sm:p-6"
+              >
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1E7FC2]">
+                  {t.tag}
+                </span>
+                <h4 className="mt-2 text-[16px] font-semibold text-gray-900 sm:text-[17px]">
+                  {t.name}
+                </h4>
+                <p className="mt-2 text-[13px] leading-[1.65] text-gray-600 sm:text-[14px]">
+                  {t.desc}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-5 flex items-start gap-2 text-[12px] leading-[1.6] text-gray-500 sm:text-[13px]">
+            <Award size={15} className="mt-0.5 shrink-0 text-[#F5B915]" />
+            <span>
+              Відзнаки технологій PROTE: золоті медалі MTP POL-ECO (TIB — 2007,
+              SYMBIO — 2008, PROTE-FOS — 2011, PROTE-QUEST — 2013), золота медаль
+              TIWS, медаль EXPO SILESIA та нагорода GreenEvo.
+            </span>
+          </p>
         </div>
       </div>
     </section>
