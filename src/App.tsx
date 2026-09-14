@@ -24,7 +24,6 @@ import { getGroups, type ProductGroup } from './productGroups'
 
 import {
   PHONE_PRIMARY,
-  PHONE_SECONDARY,
   EMAIL,
   FACEBOOK_URL,
   INSTAGRAM_URL,
@@ -134,12 +133,112 @@ function HeroShaders() {
 /* Navigation                                                          */
 /* ------------------------------------------------------------------ */
 
-const NAV_LINKS = [
-  { label: 'Головна', href: '#top' },
-  { label: 'Каталог', href: '#catalog' },
-  { label: 'Партнерам та дилерам', href: '#dealers' },
-  { label: 'Сертифікати та контакти', href: '#contacts' },
+/** Catalog categories listed in the nav's "Інша продукція" dropdown — the
+ *  flagship USC ball valves and the PROTE partner line get their own
+ *  top-level nav links instead (see NAV_ITEMS below). */
+const OTHER_CATALOG_IDS = [
+  'gate-valves',
+  'flanges',
+  'hatches',
+  'clamps',
+  'kmch',
+  'boxes',
+  'adapters',
+  'tapping',
+  'bends',
+  'reducers',
 ]
+
+const CATEGORY_JUMP_EVENT = 'usc:select-category'
+
+/** Nav links that point at a catalog category dispatch this instead of a
+ *  plain anchor jump — ProductShop listens and switches its active category. */
+function jumpToCategory(id: string) {
+  window.dispatchEvent(new CustomEvent(CATEGORY_JUMP_EVENT, { detail: id }))
+  document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+type NavItem =
+  | { kind: 'anchor'; label: string; href: string }
+  | { kind: 'category'; label: string; categoryId: string }
+  | { kind: 'group'; label: string; categoryIds: string[] }
+
+const NAV_ITEMS: NavItem[] = [
+  { kind: 'anchor', label: 'Головна', href: '#top' },
+  { kind: 'category', label: 'USC Крани', categoryId: 'ball-valves' },
+  { kind: 'anchor', label: 'Prote', href: '#prote' },
+  { kind: 'group', label: 'Інша продукція', categoryIds: OTHER_CATALOG_IDS },
+  { kind: 'anchor', label: 'Партнерам та дилерам', href: '#dealers' },
+  { kind: 'anchor', label: 'Сертифікати', href: '#certificates' },
+  { kind: 'anchor', label: 'Контакти', href: '#contact-details' },
+]
+
+/** Desktop dropdown for the "Інша продукція" nav item — lists the remaining
+ *  catalog categories with their card counts; picking one jumps into the
+ *  catalog with that category preselected. */
+function NavGroupDropdown({ label, categoryIds }: { label: string; categoryIds: string[] }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const categories = categoryIds
+    .map((id) => PRODUCT_CATEGORIES.find((c) => c.id === id))
+    .filter((c): c is ProductCategory => Boolean(c))
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="flex items-center gap-1 whitespace-nowrap text-[14px] text-gray-900 transition-colors hover:text-[#1E7FC2]"
+      >
+        {label}
+        <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-1/2 top-full z-10 mt-3 w-[300px] -translate-x-1/2 overflow-hidden rounded-2xl bg-white p-2 shadow-[0_12px_40px_rgba(0,0,0,0.14)]"
+        >
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+                jumpToCategory(c.id)
+              }}
+              className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left text-[13.5px] text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <span className="min-w-0">{c.name}</span>
+              <span className="shrink-0 rounded-full bg-[#1E7FC2]/10 px-1.5 py-0.5 text-[11px] font-semibold text-[#1E7FC2]">
+                {catCount(c)}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 /** Burger that morphs into a close icon. Three bars: the outer two rotate
  *  into an X while the middle one collapses. */
@@ -194,14 +293,24 @@ function Nav({
             className="h-9 w-9 rounded-full object-cover sm:h-10 sm:w-10"
           />
           <ul className="hidden items-center gap-6 lg:flex">
-            {NAV_LINKS.map((l) => (
-              <li key={l.label}>
-                <a
-                  href={l.href}
-                  className="whitespace-nowrap text-[14px] text-gray-900 transition-colors hover:text-[#1E7FC2]"
-                >
-                  {l.label}
-                </a>
+            {NAV_ITEMS.map((item) => (
+              <li key={item.label}>
+                {item.kind === 'group' ? (
+                  <NavGroupDropdown label={item.label} categoryIds={item.categoryIds} />
+                ) : (
+                  <a
+                    href={item.kind === 'category' ? '#catalog' : item.href}
+                    onClick={(e) => {
+                      if (item.kind === 'category') {
+                        e.preventDefault()
+                        jumpToCategory(item.categoryId)
+                      }
+                    }}
+                    className="whitespace-nowrap text-[14px] text-gray-900 transition-colors hover:text-[#1E7FC2]"
+                  >
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -236,8 +345,13 @@ function Nav({
 
 function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const time = useKyivTime()
+  const [otherOpen, setOtherOpen] = useState(false)
 
   /* Esc to close + lock the page behind the sheet while it is open */
+  useEffect(() => {
+    if (!open) setOtherOpen(false)
+  }, [open])
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -287,35 +401,96 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           </div>
 
           <ul className="mb-5">
-            {NAV_LINKS.map((l, i) => (
-              <li
-                key={l.label}
-                className="menu-row border-b border-gray-100 last:border-b-0"
-                style={{ animationDelay: `${90 + i * 55}ms` }}
-              >
-                <a
-                  href={l.href}
-                  onClick={onClose}
-                  className="group flex items-baseline gap-3 py-3.5 active:opacity-60"
+            {NAV_ITEMS.map((item, i) => {
+              if (item.kind === 'group') {
+                const categories = item.categoryIds
+                  .map((id) => PRODUCT_CATEGORIES.find((c) => c.id === id))
+                  .filter((c): c is ProductCategory => Boolean(c))
+                return (
+                  <li
+                    key={item.label}
+                    className="menu-row border-b border-gray-100 last:border-b-0"
+                    style={{ animationDelay: `${90 + i * 55}ms` }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOtherOpen((v) => !v)}
+                      aria-expanded={otherOpen}
+                      className="group flex w-full items-baseline gap-3 py-3.5 text-left active:opacity-60"
+                    >
+                      <span className="w-[22px] shrink-0 text-[11px] font-semibold tabular-nums text-gray-300">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="flex-1 text-[clamp(21px,5.8vw,26px)] font-medium leading-[1.15] tracking-[-0.01em] text-gray-900">
+                        {item.label}
+                      </span>
+                      <ChevronDown
+                        size={18}
+                        className={`shrink-0 self-center text-gray-300 transition-transform ${otherOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {otherOpen && (
+                      <ul className="mb-3 grid gap-0.5 pl-[34px] pr-1">
+                        {categories.map((c) => (
+                          <li key={c.id}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onClose()
+                                jumpToCategory(c.id)
+                              }}
+                              className="flex w-full items-center justify-between gap-2 rounded-xl py-2 text-left text-[14px] text-gray-700 active:opacity-60"
+                            >
+                              <span className="min-w-0">{c.name}</span>
+                              <span className="shrink-0 rounded-full bg-[#1E7FC2]/10 px-1.5 py-0.5 text-[11px] font-semibold text-[#1E7FC2]">
+                                {catCount(c)}
+                              </span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                )
+              }
+
+              const href = item.kind === 'category' ? '#catalog' : item.href
+              return (
+                <li
+                  key={item.label}
+                  className="menu-row border-b border-gray-100 last:border-b-0"
+                  style={{ animationDelay: `${90 + i * 55}ms` }}
                 >
-                  <span className="w-[22px] shrink-0 text-[11px] font-semibold tabular-nums text-gray-300">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="flex-1 text-[clamp(21px,5.8vw,26px)] font-medium leading-[1.15] tracking-[-0.01em] text-gray-900">
-                    {l.label}
-                  </span>
-                  <ArrowUpRight
-                    size={18}
-                    className="shrink-0 self-center text-gray-300 transition-colors group-active:text-[#1E7FC2]"
-                  />
-                </a>
-              </li>
-            ))}
+                  <a
+                    href={href}
+                    onClick={(e) => {
+                      if (item.kind === 'category') {
+                        e.preventDefault()
+                        jumpToCategory(item.categoryId)
+                      }
+                      onClose()
+                    }}
+                    className="group flex items-baseline gap-3 py-3.5 active:opacity-60"
+                  >
+                    <span className="w-[22px] shrink-0 text-[11px] font-semibold tabular-nums text-gray-300">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="flex-1 text-[clamp(21px,5.8vw,26px)] font-medium leading-[1.15] tracking-[-0.01em] text-gray-900">
+                      {item.label}
+                    </span>
+                    <ArrowUpRight
+                      size={18}
+                      className="shrink-0 self-center text-gray-300 transition-colors group-active:text-[#1E7FC2]"
+                    />
+                  </a>
+                </li>
+              )
+            })}
           </ul>
 
           <div
             className="menu-row flex items-center gap-2.5"
-            style={{ animationDelay: `${90 + NAV_LINKS.length * 55}ms` }}
+            style={{ animationDelay: `${90 + NAV_ITEMS.length * 55}ms` }}
           >
             <a
               href="#catalog"
@@ -591,7 +766,7 @@ function Catalog() {
         </div>
 
         {/* PROTE — partner line, kept as a separate highlight */}
-        <div className="mt-14 sm:mt-16">
+        <div id="prote" className="mt-14 scroll-mt-24 sm:mt-16">
           <div className="mb-6 flex items-center gap-3">
             <span className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">
               Партнерська лінійка
@@ -812,6 +987,17 @@ function ProductShop() {
   const [openGroup, setOpenGroup] = useState<SelectedGroup | null>(null)
   const active = PRODUCT_CATEGORIES.find((c) => c.id === activeId) ?? PRODUCT_CATEGORIES[0]
   const groups = getGroups(active)
+
+  /* Nav links (desktop dropdown + mobile sheet) dispatch this to jump straight
+   * to a category instead of just scrolling to the top of the catalog. */
+  useEffect(() => {
+    const onJump = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail
+      if (PRODUCT_CATEGORIES.some((c) => c.id === id)) setActiveId(id)
+    }
+    window.addEventListener(CATEGORY_JUMP_EVENT, onJump)
+    return () => window.removeEventListener(CATEGORY_JUMP_EVENT, onJump)
+  }, [])
 
   return (
     <div className="lg:grid lg:grid-cols-[248px_1fr] lg:gap-8">
@@ -1540,7 +1726,7 @@ function ContactsSection() {
         </h2>
 
         {/* Certificates */}
-        <div className="mb-14 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
+        <div id="certificates" className="mb-14 scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
           {CERTIFICATES.map((c) => {
             const Icon = c.icon
             return (
@@ -1561,7 +1747,7 @@ function ContactsSection() {
         </div>
 
         {/* Contacts */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
+        <div id="contact-details" className="scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
           <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
             <Phone size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Телефон</span>
@@ -1570,12 +1756,6 @@ function ContactsSection() {
               className="text-[15px] font-semibold text-gray-900 transition-colors hover:text-[#1E7FC2]"
             >
               {formatPhone(PHONE_PRIMARY)}
-            </a>
-            <a
-              href={`tel:${PHONE_SECONDARY}`}
-              className="text-[15px] font-semibold text-gray-900 transition-colors hover:text-[#1E7FC2]"
-            >
-              {formatPhone(PHONE_SECONDARY)}
             </a>
           </div>
           <a
