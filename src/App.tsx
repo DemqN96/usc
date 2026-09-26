@@ -236,7 +236,6 @@ type NavItem =
   | { kind: 'group'; label: string; categoryIds: string[] }
 
 const NAV_ITEMS: NavItem[] = [
-  { kind: 'anchor', label: 'Головна', href: '#top' },
   { kind: 'category', label: 'USC Крани', categoryId: 'ball-valves' },
   { kind: 'anchor', label: 'Prote', href: '#prote' },
   { kind: 'group', label: 'Інша продукція', categoryIds: OTHER_CATALOG_IDS },
