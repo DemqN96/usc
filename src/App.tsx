@@ -80,6 +80,97 @@ function ValveMark({ className = '' }: { className?: string }) {
   )
 }
 
+/** Fires once when the wrapped element scrolls into view. Used to drive the
+ *  scroll-reveal animation below without re-triggering on every re-render. */
+function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
+  const ref = useRef<T>(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true)
+      return
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          obs.disconnect()
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -10% 0px', ...options },
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return { ref, inView }
+}
+
+/** Fades a section into place the first time it scrolls into view. Purely
+ *  CSS-driven (transform/opacity) so it costs nothing extra to host. */
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+  id,
+  as: Tag = 'div',
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+  id?: string
+  as?: 'div' | 'article'
+}) {
+  const { ref, inView } = useInView<HTMLDivElement>()
+  return (
+    <Tag
+      ref={ref as React.RefObject<never>}
+      id={id}
+      className={`transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-y-0 ${
+        inView ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+      } ${className}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </Tag>
+  )
+}
+
+/** Thin brand-gradient bar pinned to the very top, filling with scroll
+ *  progress — a small, static-only touch of "app" polish. */
+function ScrollProgress() {
+  const [progress, setProgress] = useState(0)
+  useEffect(() => {
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const el = document.documentElement
+        const max = el.scrollHeight - el.clientHeight
+        setProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0)
+      })
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
+  return (
+    <div
+      className="fixed inset-x-0 top-0 z-[70] h-[3px] bg-transparent"
+      aria-hidden="true"
+    >
+      <div
+        className="h-full bg-gradient-to-r from-[#1E7FC2] to-[#F5B915] transition-[width] duration-150 ease-out"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------------ */
 /* Shader background                                                   */
 /* ------------------------------------------------------------------ */
@@ -536,7 +627,7 @@ function Hero() {
 
       {/* Brand mark centred in the open space, blended into the background */}
       <div className="pointer-events-none relative z-10 flex flex-1 items-center justify-center px-6">
-        <div className="usc-hero-mark w-[52%] max-w-[285px] sm:w-[33%] sm:max-w-[345px]">
+        <div className="usc-hero-mark animate-mark-in w-[52%] max-w-[285px] sm:w-[33%] sm:max-w-[345px]">
           <img
             src={uscLogoMark}
             alt="USC — Ukrainian Santechnical Company"
@@ -549,18 +640,27 @@ function Hero() {
       {/* Content pinned to bottom */}
       <div className="relative z-20 w-full">
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-14 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
-          <p className="mb-5 text-[13px] tracking-wide text-gray-900 sm:mb-8 sm:text-[14px]">
+          <p
+            className="animate-hero-in mb-5 text-[13px] tracking-wide text-gray-900 sm:mb-8 sm:text-[14px]"
+            style={{ animationDelay: '120ms' }}
+          >
             USC — Ukrainian Santechnical Company
           </p>
-          <h1 className="font-medium leading-[1.08] tracking-[-0.03em] text-gray-900 text-[clamp(1.75rem,7vw,4.2rem)] sm:text-[clamp(2.5rem,5vw,4.2rem)]">
+          <h1
+            className="animate-hero-in font-medium leading-[1.08] tracking-[-0.03em] text-gray-900 text-[clamp(1.75rem,7vw,4.2rem)] sm:text-[clamp(2.5rem,5vw,4.2rem)]"
+            style={{ animationDelay: '240ms' }}
+          >
             Сталева кульова арматура <br className="hidden sm:block" />
             для опалення, газу <br className="hidden sm:block" />
             та спеціальних застосувань.
           </h1>
 
-          <div className="mt-8 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:items-center sm:gap-5">
+          <div
+            className="animate-hero-in mt-8 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:items-center sm:gap-5"
+            style={{ animationDelay: '420ms' }}
+          >
             <a
-              href="#"
+              href="#catalog"
               className="group inline-flex items-center gap-3 self-start rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
             >
               <TextRoll>Перейти до каталогу</TextRoll>
@@ -618,18 +718,25 @@ function About() {
   )
 
   return (
-    <section className="overflow-hidden bg-white pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-24 lg:pt-32">
-      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
+    <section className="relative overflow-hidden bg-white pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-24 lg:pt-32">
+      {/* Soft depth wash — decorative only, keeps the white section from reading flat */}
+      <div
+        className="pointer-events-none absolute -right-40 -top-32 h-[520px] w-[520px] rounded-full bg-[#1E7FC2]/[0.06] blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="1" label="Про компанію USC" />
         </div>
-        <h2 className="mb-10 max-w-[22ch] font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-14 lg:mb-16">
-          Український бренд трубопровідних <br className="hidden sm:block" />
-          систем та запірної арматури.
-        </h2>
+        <Reveal>
+          <h2 className="mb-10 max-w-[22ch] font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-14 lg:mb-16">
+            Український бренд трубопровідних <br className="hidden sm:block" />
+            систем та запірної арматури.
+          </h2>
+        </Reveal>
 
         {/* Lead narrative + imagery */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_46%] lg:gap-12">
+        <Reveal delay={80} className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_46%] lg:gap-12">
           <div className="max-w-[62ch]">
             <p className="mb-5 text-[16px] font-medium leading-[1.6] text-gray-900 sm:text-[18px]">
               Історія USC починається з переконання, що сучасна Україна заслуговує
@@ -667,24 +774,30 @@ function About() {
 
           {/* Imagery */}
           <div className="flex flex-col gap-4 sm:flex-row lg:flex-col">
-            <img
-              src={zavodBalls}
-              alt="Сталеві кулі для запірної арматури TM USC"
-              className="aspect-[438/346] w-full rounded-2xl object-cover sm:w-1/2 lg:w-full"
-            />
-            <img
-              src={zavodProte}
-              alt="Обладнання PROTE"
-              className="aspect-[900/600] w-full rounded-2xl object-cover sm:w-1/2 lg:w-full"
-            />
+            <div className="group aspect-[438/346] w-full overflow-hidden rounded-2xl sm:w-1/2 lg:w-full">
+              <img
+                src={zavodBalls}
+                alt="Сталеві кулі для запірної арматури TM USC"
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
+            <div className="group aspect-[900/600] w-full overflow-hidden rounded-2xl sm:w-1/2 lg:w-full">
+              <img
+                src={zavodProte}
+                alt="Обладнання PROTE"
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Closing tagline */}
-        <p className="mt-12 border-t border-gray-200 pt-8 text-[16px] font-medium leading-[1.5] text-gray-900 sm:mt-16 sm:text-[20px] lg:text-[24px]">
-          Український характер. Європейська інженерія.{' '}
-          <span className="text-[#1E7FC2]">Надійність, що працює поколіннями.</span>
-        </p>
+        <Reveal delay={120}>
+          <p className="mt-12 border-t border-gray-200 pt-8 text-[16px] font-medium leading-[1.5] text-gray-900 sm:mt-16 sm:text-[20px] lg:text-[24px]">
+            Український характер. Європейська інженерія.{' '}
+            <span className="text-[#1E7FC2]">Надійність, що працює поколіннями.</span>
+          </p>
+        </Reveal>
       </div>
     </section>
   )
@@ -743,12 +856,14 @@ function Catalog() {
         <div className="mb-8">
           <BadgeRow num="2" label="Каталог продукції" />
         </div>
-        <h2 className="mb-12 font-medium leading-[1.08] tracking-[-0.03em] text-gray-900 text-[clamp(1.75rem,7vw,4.2rem)] sm:mb-16 sm:text-[clamp(2.5rem,5vw,4.2rem)]">
-          Наш асортимент
-        </h2>
+        <Reveal>
+          <h2 className="mb-12 font-medium leading-[1.08] tracking-[-0.03em] text-gray-900 text-[clamp(1.75rem,7vw,4.2rem)] sm:mb-16 sm:text-[clamp(2.5rem,5vw,4.2rem)]">
+            Наш асортимент
+          </h2>
+        </Reveal>
 
         {/* Full assortment — single unified list (no prices) */}
-        <div id="full-catalog" className="scroll-mt-24">
+        <Reveal delay={80} id="full-catalog" className="scroll-mt-24">
           <div className="mb-8">
             <p className="max-w-[68ch] text-[15px] leading-[1.7] text-gray-600 sm:text-[16px]">
               Повний асортимент трубопровідної та запірної арматури, газового й
@@ -763,7 +878,7 @@ function Catalog() {
           </div>
 
           <ProductShop />
-        </div>
+        </Reveal>
 
         {/* PROTE — partner line, kept as a separate highlight */}
         <div id="prote" className="mt-14 scroll-mt-24 sm:mt-16">
@@ -773,14 +888,14 @@ function Catalog() {
             </span>
             <span className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
           </div>
-          <article className="overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+          <Reveal as="article" className="group overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
             {/* Partner cover — PROTE brand visual */}
             <div className="relative">
               <div className="h-[150px] w-full overflow-hidden sm:h-[210px] lg:h-[240px]">
                 <img
                   src={proteForest}
                   alt="PROTE — технології для захисту довкілля"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
               {/* USC mark × PROTE wordmark meeting on the cover edge */}
@@ -828,13 +943,13 @@ function Catalog() {
                 ))}
               </dl>
             </div>
-          </article>
+          </Reveal>
 
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal delay={80} className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PROTE_TECHNOLOGIES.map((t) => (
               <article
                 key={t.name}
-                className="rounded-2xl bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] sm:p-6"
+                className="rounded-2xl bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(30,127,194,0.14)] sm:p-6"
               >
                 <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1E7FC2]">
                   {t.tag}
@@ -847,7 +962,7 @@ function Catalog() {
                 </p>
               </article>
             ))}
-          </div>
+          </Reveal>
 
           <p className="mt-5 flex items-start gap-2 text-[12px] leading-[1.6] text-gray-500 sm:text-[13px]">
             <Award size={15} className="mt-0.5 shrink-0 text-[#F5B915]" />
@@ -1083,7 +1198,7 @@ function ProductShop() {
                         src={t.image}
                         alt={t.name}
                         loading="lazy"
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
                       />
                     ) : (
                       <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
@@ -1124,7 +1239,7 @@ function ProductShop() {
                       src={g.image}
                       alt={g.name}
                       loading="lazy"
-                      className="h-full w-full object-contain"
+                      className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   ) : (
                     <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
@@ -1167,7 +1282,7 @@ function ProductShop() {
                         src={itImg}
                         alt={it}
                         loading="lazy"
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
                       />
                     ) : (
                       <ValveMark className="h-10 w-10 fill-current text-[#1E7FC2]/25" />
@@ -1245,8 +1360,8 @@ function ProductModal({
       aria-modal="true"
       aria-label={product.item}
     >
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="animate-modal-in relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={onClose}
@@ -1322,8 +1437,8 @@ function GroupModal({
       aria-modal="true"
       aria-label={group.name}
     >
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="animate-modal-in relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={onClose}
@@ -1440,8 +1555,8 @@ function TypeModal({
       aria-modal="true"
       aria-label={type.name}
     >
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="animate-modal-in relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={onClose}
@@ -1542,9 +1657,82 @@ const DEALER_BENEFITS = [
   },
 ]
 
+/** Minimal, on-page notice about how the dealer form's personal data is
+ *  processed — makes the checkbox consent an *informed* consent per the Law
+ *  of Ukraine "Про захист персональних даних" (№ 2297-VI, ст. 8, 12). This is
+ *  intentionally short: a lead form, not a full privacy-policy document. */
+function PrivacyModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Обробка персональних даних"
+    >
+      <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="animate-modal-in relative z-10 flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Закрити"
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow transition-colors hover:bg-gray-100"
+        >
+          <X size={18} />
+        </button>
+        <div className="min-h-0 flex-1 overflow-y-auto p-6 pr-14 sm:p-8 sm:pr-16">
+          <h4 className="text-[17px] font-semibold text-gray-900 sm:text-[19px]">
+            Обробка персональних даних
+          </h4>
+          <div className="mt-4 space-y-3 text-[13.5px] leading-[1.7] text-gray-600">
+            <p>
+              Заповнюючи цю форму, ви передаєте{' '}
+              <span className="font-medium text-gray-900">ТОВ «ЮСК.ПРО»</span> (ЄДРПОУ
+              46315118, 03151, м. Київ, вул. Волинська, 48/50, офіс 516) свої
+              персональні дані: ім’я, назву компанії, email та номер телефону.
+            </p>
+            <p>
+              Дані використовуються виключно для розгляду вашої заявки на
+              партнерство чи дилерство та зворотного зв’язку з вами. Ми не передаємо
+              їх третім особам, окрім сервісів, що технічно забезпечують доставку
+              заявки до нашого відділу продажів.
+            </p>
+            <p>
+              Обробка здійснюється на підставі вашої згоди відповідно до Закону
+              України «Про захист персональних даних» № 2297-VI. Ви маєте право
+              будь-коли відкликати згоду, а також отримати, виправити чи вимагати
+              видалення своїх даних — для цього напишіть на{' '}
+              <a href={`mailto:${EMAIL}`} className="font-medium text-[#1E7FC2] hover:underline">
+                {EMAIL}
+              </a>{' '}
+              або зателефонуйте на{' '}
+              <a
+                href={`tel:${PHONE_PRIMARY}`}
+                className="font-medium text-[#1E7FC2] hover:underline"
+              >
+                {formatPhone(PHONE_PRIMARY)}
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function DealersSection() {
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  /** Consent to process personal data (Law of Ukraine "Про захист персональних
+   *  даних" № 2297-VI) — required before the form may be submitted. */
+  const [consent, setConsent] = useState(false)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
 
   const update =
     (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -1552,6 +1740,7 @@ function DealersSection() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!consent) return
     setStatus('sending')
     try {
       // Deliver the lead to the CRM / form backend. The destination is set via
@@ -1584,12 +1773,14 @@ function DealersSection() {
         <div className="mb-8">
           <BadgeRow num="3" label="Партнерам та дилерам" />
         </div>
-        <h2 className="mb-12 font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-16">
-          Станьте офіційним <br className="hidden sm:block" />
-          дилером USC.
-        </h2>
+        <Reveal>
+          <h2 className="mb-12 font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-16">
+            Станьте офіційним <br className="hidden sm:block" />
+            дилером USC.
+          </h2>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+        <Reveal delay={80} className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Benefits */}
           <div>
             <p className="mb-8 max-w-md text-[15px] font-medium leading-[1.6] text-gray-800 sm:text-[17px]">
@@ -1672,6 +1863,28 @@ function DealersSection() {
                   />
                 </div>
 
+                <label className="flex items-start gap-2.5 text-[12.5px] leading-[1.5] text-gray-600">
+                  <input
+                    required
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    disabled={status === 'sending'}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1E7FC2] focus:ring-[#1E7FC2] disabled:opacity-60"
+                  />
+                  <span>
+                    Я даю згоду на обробку моїх персональних даних відповідно до
+                    Закону України «Про захист персональних даних».{' '}
+                    <button
+                      type="button"
+                      onClick={() => setPrivacyOpen(true)}
+                      className="font-medium text-[#1E7FC2] underline underline-offset-2 hover:text-[#175f92]"
+                    >
+                      Детальніше
+                    </button>
+                  </span>
+                </label>
+
                 {status === 'error' && (
                   <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-[13px] text-red-600">
                     Не вдалося надіслати заявку. Спробуйте ще раз або зателефонуйте
@@ -1680,7 +1893,7 @@ function DealersSection() {
                 )}
                 <button
                   type="submit"
-                  disabled={status === 'sending'}
+                  disabled={status === 'sending' || !consent}
                   className="group flex w-full items-center justify-center gap-3 rounded-full bg-[#4A4D52] py-3.5 text-[14px] font-medium text-white transition-colors hover:bg-[#3a3d42] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {status === 'sending' ? 'Надсилаємо…' : 'Надіслати заявку'}
@@ -1694,8 +1907,9 @@ function DealersSection() {
               </form>
             )}
           </div>
-        </div>
+        </Reveal>
       </div>
+      {privacyOpen && <PrivacyModal onClose={() => setPrivacyOpen(false)} />}
     </section>
   )
 }
@@ -1714,25 +1928,36 @@ function ContactsSection() {
   return (
     <section
       id="contacts"
-      className="bg-[#F5F5F5] pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28"
+      className="relative overflow-hidden bg-[#F5F5F5] pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28"
     >
-      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
+      {/* Soft depth wash — decorative only */}
+      <div
+        className="pointer-events-none absolute -left-32 top-0 h-[420px] w-[420px] rounded-full bg-[#1E7FC2]/[0.05] blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="4" label="Сертифікати та контакти" />
         </div>
-        <h2 className="mb-12 font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-16">
-          Якість, підтверджена <br className="hidden sm:block" />
-          документально.
-        </h2>
+        <Reveal>
+          <h2 className="mb-12 font-medium leading-[1.12] tracking-[-0.02em] text-gray-900 text-[clamp(1.5rem,4vw,3.2rem)] sm:mb-16">
+            Якість, підтверджена <br className="hidden sm:block" />
+            документально.
+          </h2>
+        </Reveal>
 
         {/* Certificates */}
-        <div id="certificates" className="mb-14 scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
+        <Reveal
+          delay={80}
+          id="certificates"
+          className="mb-14 scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6"
+        >
           {CERTIFICATES.map((c) => {
             const Icon = c.icon
             return (
               <div
                 key={c.title}
-                className="flex items-start gap-4 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+                className="flex items-start gap-4 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
               >
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1E7FC2]/10 text-[#1E7FC2]">
                   <Icon size={24} />
@@ -1744,11 +1969,15 @@ function ContactsSection() {
               </div>
             )
           })}
-        </div>
+        </Reveal>
 
         {/* Contacts */}
-        <div id="contact-details" className="scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
-          <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+        <Reveal
+          delay={140}
+          id="contact-details"
+          className="scroll-mt-24 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6"
+        >
+          <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
             <Phone size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Телефон</span>
             <a
@@ -1766,7 +1995,7 @@ function ContactsSection() {
             <span className="text-[13px] text-gray-500">Email</span>
             <span className="text-[15px] font-semibold text-gray-900">{EMAIL}</span>
           </a>
-          <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+          <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
             <MapPin size={22} className="text-[#1E7FC2]" />
             <span className="text-[13px] text-gray-500">Адреса</span>
             <span className="text-[15px] font-semibold text-gray-900">
@@ -1785,7 +2014,7 @@ function ContactsSection() {
               <span className="text-[15px] font-semibold text-gray-900">Facebook</span>
             </a>
           )}
-        </div>
+        </Reveal>
       </div>
     </section>
   )
@@ -1795,19 +2024,116 @@ function ContactsSection() {
 /* Footer                                                               */
 /* ------------------------------------------------------------------ */
 
+/** Quick-nav links repeated in the footer — same anchors as the main nav's
+ *  plain (non-catalog-jump) items, so both stay in sync by hand when the
+ *  page structure changes. */
+const FOOTER_LINKS = [
+  { label: 'Про компанію', href: '#top' },
+  { label: 'Каталог', href: '#catalog' },
+  { label: 'Prote', href: '#prote' },
+  { label: 'Партнерам та дилерам', href: '#dealers' },
+  { label: 'Сертифікати', href: '#certificates' },
+  { label: 'Контакти', href: '#contact-details' },
+]
+
 function Footer() {
   return (
-    <footer className="bg-[#4A4D52] py-8 text-white">
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-4 px-5 sm:flex-row sm:px-8 lg:px-12">
-        <div className="flex items-center gap-3">
-          <img src={uscLogo} alt="USC" className="h-9 w-9 rounded-full object-cover" />
-          <span className="text-[13px] text-gray-300">
-            USC — Ukrainian Santechnical Company
-          </span>
+    <footer className="relative bg-[#4A4D52] pb-8 pt-14 text-white sm:pt-16">
+      <span
+        className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[#1E7FC2] via-[#F5B915] to-[#1E7FC2]"
+        aria-hidden="true"
+      />
+      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr] lg:gap-8">
+          {/* Brand */}
+          <div>
+            <div className="flex items-center gap-3">
+              <img src={uscLogo} alt="USC" className="h-10 w-10 rounded-full object-cover" />
+              <span className="text-[15px] font-semibold text-white">
+                USC — Ukrainian Santechnical Company
+              </span>
+            </div>
+            <p className="mt-4 max-w-xs text-[13px] leading-[1.65] text-gray-300">
+              Український бренд трубопровідних систем та запірної арматури.
+              Ексклюзивний представник PROTE в Україні.
+            </p>
+          </div>
+
+          {/* Quick nav */}
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+              Навігація
+            </p>
+            <ul className="space-y-2.5">
+              {FOOTER_LINKS.map((l) => (
+                <li key={l.label}>
+                  <a
+                    href={l.href}
+                    className="text-[13.5px] text-gray-300 transition-colors hover:text-white"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contacts */}
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+              Контакти
+            </p>
+            <ul className="space-y-2.5 text-[13.5px] text-gray-300">
+              <li>
+                <a
+                  href={`tel:${PHONE_PRIMARY}`}
+                  className="transition-colors hover:text-white"
+                >
+                  {formatPhone(PHONE_PRIMARY)}
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-white">
+                  {EMAIL}
+                </a>
+              </li>
+              <li className="leading-[1.5]">03151, м. Київ, вул. Волинська, 48/50</li>
+            </ul>
+            {(FACEBOOK_URL || INSTAGRAM_URL) && (
+              <div className="mt-5 flex items-center gap-2">
+                {FACEBOOK_URL && (
+                  <a
+                    href={FACEBOOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                  >
+                    <Facebook size={16} />
+                  </a>
+                )}
+                {INSTAGRAM_URL && (
+                  <a
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                  >
+                    <Instagram size={16} />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-        <span className="text-[12px] text-gray-400">
-          © {new Date().getFullYear()} ТОВ «ЮСК.ПРО» (ЄДРПОУ 46315118). Усі права захищені.
-        </span>
+
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 sm:flex-row">
+          <span className="text-center text-[12px] text-gray-400 sm:text-left">
+            © {new Date().getFullYear()} ТОВ «ЮСК.ПРО» (ЄДРПОУ 46315118). Усі права захищені.
+          </span>
+          <span className="text-[12px] text-gray-500">Лише краще обладнання</span>
+        </div>
       </div>
     </footer>
   )
@@ -1849,6 +2175,7 @@ function SocialRail() {
 export default function App() {
   return (
     <main>
+      <ScrollProgress />
       <SocialRail />
       <Hero />
       <About />
