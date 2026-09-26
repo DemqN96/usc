@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Component, type ReactNode } from 'react'
-import { Shader, Swirl, ChromaFlow, FlutedGlass, FilmGrain } from 'shaders/react'
+import { MeshGradient } from '@paper-design/shaders-react'
 import {
   Clock,
   ArrowRight,
@@ -172,7 +172,7 @@ function ScrollProgress() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Shader background                                                   */
+/* Page background                                                     */
 /* ------------------------------------------------------------------ */
 
 class ShaderBoundary extends Component<{ children: ReactNode }, { err: boolean }> {
@@ -185,37 +185,18 @@ class ShaderBoundary extends Component<{ children: ReactNode }, { err: boolean }
   }
 }
 
-function HeroShaders() {
+function PageBackground() {
   return (
-    <div className="absolute inset-0 z-10 pointer-events-none">
-      <Shader className="h-full w-full">
-        <Swirl colorA="#eef6fc" colorB="#cfe6f7" detail={1.7}>
-          <ChromaFlow
-            baseColor="#ffffff"
-            downColor="#1E7FC2"
-            leftColor="#1E7FC2"
-            rightColor="#1E7FC2"
-            upColor="#1E7FC2"
-            momentum={13}
-            radius={3.5}
-          >
-            <FlutedGlass
-              aberration={0.61}
-              angle={31}
-              frequency={8}
-              highlight={0.12}
-              highlightSoftness={0}
-              lightAngle={-90}
-              refraction={4}
-              shape="rounded"
-              softness={1}
-              speed={0.15}
-            >
-              <FilmGrain strength={0.05} />
-            </FlutedGlass>
-          </ChromaFlow>
-        </Swirl>
-      </Shader>
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+      <MeshGradient
+        className="h-full w-full"
+        colors={['#ffffff', '#f7fbfe', '#eef6fc', '#d6eaf8']}
+        distortion={0.8}
+        swirl={0.35}
+        grainMixer={0}
+        grainOverlay={0.05}
+        speed={0.3}
+      />
     </div>
   )
 }
@@ -618,10 +599,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
 function Hero() {
   const [menuOpen, setMenuOpen] = useState(false)
   return (
-    <section id="top" className="relative flex min-h-screen flex-col bg-[#EFEFEF]">
-      <ShaderBoundary>
-        <HeroShaders />
-      </ShaderBoundary>
+    <section id="top" className="relative flex min-h-screen flex-col">
       <Nav menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
@@ -718,7 +696,7 @@ function About() {
   )
 
   return (
-    <section className="relative overflow-hidden bg-white pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-24 lg:pt-32">
+    <section className="relative overflow-hidden pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-24 lg:pt-32">
       {/* Soft depth wash — decorative only, keeps the white section from reading flat */}
       <div
         className="pointer-events-none absolute -right-40 -top-32 h-[520px] w-[520px] rounded-full bg-[#1E7FC2]/[0.06] blur-3xl"
@@ -851,7 +829,7 @@ const PROTE_STATS = [
 
 function Catalog() {
   return (
-    <section id="catalog" className="bg-[#F5F5F5] pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
+    <section id="catalog" className="pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="2" label="Каталог продукції" />
@@ -1768,7 +1746,7 @@ function DealersSection() {
   }
 
   return (
-    <section id="dealers" className="bg-white pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
+    <section id="dealers" className="pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="3" label="Партнерам та дилерам" />
@@ -1928,7 +1906,7 @@ function ContactsSection() {
   return (
     <section
       id="contacts"
-      className="relative overflow-hidden bg-[#F5F5F5] pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28"
+      className="relative overflow-hidden pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28"
     >
       {/* Soft depth wash — decorative only */}
       <div
@@ -2175,6 +2153,9 @@ function SocialRail() {
 export default function App() {
   return (
     <main>
+      <ShaderBoundary>
+        <PageBackground />
+      </ShaderBoundary>
       <ScrollProgress />
       <SocialRail />
       <Hero />
