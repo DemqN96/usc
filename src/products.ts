@@ -1,9 +1,9 @@
 // AUTO-GENERATED from Роздрібний_прайс_ЮСК.ПРО_2026.xls (prices intentionally omitted).
 import kranFlantsevyy from './assets/kran-flantsevyy.jpg'
 import kranPryvarnyy from './assets/kran-pryvarnyy.jpg'
-import kranMuftovyy from './assets/kran-muftovyy.png'
-import kranKombinovanyy from './assets/kran-kombinovanyy.png'
-import kranPidzemnyy from './assets/kran-pidzemnyy.png'
+import kranMuftovyy from './assets/kran-muftovyy.jpg'
+import kranKombinovanyy from './assets/kran-kombinovanyy.jpg'
+import kranPidzemnyy from './assets/kran-pidzemnyy.jpg'
 import lyukLegkyyA50 from './assets/lyuk-legkyy-a50.png'
 import lyukKvadratnyyA15 from './assets/lyuk-kvadratnyy-a15.png'
 import lyukReviziynyyA50 from './assets/lyuk-reviziynyy-a50.png'
