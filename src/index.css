@@ -152,17 +152,18 @@ body {
   }
 }
 
-/* Hero brand mark — transparent PNG blends into the shader background */
+/* Hero brand mark — transparent WebP blends into the shader background */
 .usc-hero-mark {
   position: relative;
 }
 
-/* Soft glow sitting over the flame at the top-centre of the badge */
+/* Soft glow sitting over the flame of the emblem. Offsets are percentages of
+ * the splash logo (emblem + water), so they track the artwork at any size. */
 .usc-flame-glow {
   position: absolute;
-  left: 50%;
-  top: 31%;
-  width: 20%;
+  left: 52.4%;
+  top: 41.3%;
+  width: 10.3%;
   aspect-ratio: 3 / 4;
   transform: translate(-50%, -50%);
   border-radius: 9999px;
