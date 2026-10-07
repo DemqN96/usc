@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ArrowRight, Award, Check, ChevronDown, X } from 'lucide-react'
+import { Award, Check, ChevronDown, X } from 'lucide-react'
 
-import { Collapse, TextRoll } from '../../components/ui'
+import { Collapse, Cta } from '../../components/ui'
 import { readHash, useColumns } from '../../lib/hooks'
 import { PROTE_TECHS, type ProteTech } from './content'
 import { PosExtras, QuestExtras } from './extras'
@@ -181,15 +181,7 @@ function TechPanel({ tech, onClose }: { tech: ProteTech; onClose: () => void }) 
         ) : (
           <span />
         )}
-        <a
-          href="#contact-details"
-          className="group inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:text-[14px]"
-        >
-          <TextRoll>Залишити запит</TextRoll>
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
-            <ArrowRight size={15} className="text-gray-900" />
-          </span>
-        </a>
+        <Cta href="#contact-details">Залишити запит</Cta>
       </div>
     </article>
   )

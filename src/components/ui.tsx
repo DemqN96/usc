@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import type { MouseEventHandler, ReactNode } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { useInView } from '../lib/hooks'
 
 /* A rolling text label used on CTA buttons */
@@ -8,6 +9,47 @@ export function TextRoll({ children }: { children: string }) {
       <span>{children}</span>
       <span aria-hidden="true">{children}</span>
     </span>
+  )
+}
+
+/** Primary call to action — yellow pill with a rolling label and an arrow
+ *  disc. The look (gradient, glow, lift on hover, periodic glint, optional
+ *  pulse) is `.usc-cta` in index.css. */
+export function Cta({
+  href,
+  children,
+  onClick,
+  size = 'md',
+  pulse = false,
+  className = '',
+}: {
+  href: string
+  children: string
+  onClick?: MouseEventHandler<HTMLAnchorElement>
+  /** `lg` — the hero's main button */
+  size?: 'md' | 'lg'
+  /** a halo that swells around the button now and then */
+  pulse?: boolean
+  className?: string
+}) {
+  const lg = size === 'lg'
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      className={`usc-cta group/cta inline-flex items-center gap-3 rounded-full py-2.5 pl-6 pr-2.5 font-semibold text-gray-900 ${
+        lg ? 'text-[15px] sm:gap-4 sm:py-3 sm:pl-8 sm:pr-3 sm:text-[17px]' : 'text-[14px] sm:pl-7 sm:text-[15px]'
+      } ${pulse ? 'usc-cta--pulse' : ''} ${className}`}
+    >
+      <TextRoll>{children}</TextRoll>
+      <span
+        className={`flex shrink-0 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(122,80,0,0.28)] transition-transform duration-500 group-hover/cta:-rotate-45 ${
+          lg ? 'h-9 w-9 sm:h-10 sm:w-10' : 'h-8 w-8 sm:h-9 sm:w-9'
+        }`}
+      >
+        <ArrowRight size={lg ? 20 : 17} strokeWidth={2.25} className="text-gray-900" />
+      </span>
+    </a>
   )
 }
 

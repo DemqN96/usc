@@ -431,10 +431,10 @@ function MobileMenu({ page, open, onClose }: { page: PageId; open: boolean; onCl
             <a
               href={sectionHref(page, '#catalog')}
               onClick={onClose}
-              className="group flex flex-1 items-center justify-between rounded-full bg-[#F5B915] py-3 pl-5 pr-2.5 text-[15px] font-medium text-gray-900 transition-transform active:scale-[0.98]"
+              className="usc-cta group flex flex-1 items-center justify-between rounded-full py-3 pl-5 pr-2.5 text-[15px] font-semibold text-gray-900"
             >
               Перейти до каталогу
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(122,80,0,0.28)] transition-transform duration-500 group-hover:-rotate-45">
                 <ArrowRight size={16} className="text-gray-900" />
               </span>
             </a>

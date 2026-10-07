@@ -39,6 +39,105 @@ body {
   transform: translateY(-100%);
 }
 
+/* Primary CTA (`Cta` in components/ui.tsx): a warm gradient pill with a soft
+ * glow that lifts on hover; every few seconds a glint sweeps across it. */
+.usc-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffd43b 0%, #f5b915 55%, #eaa507 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 10px 24px -8px rgba(234, 165, 7, 0.75),
+    0 2px 6px rgba(17, 24, 39, 0.08);
+  transition:
+    transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 300ms ease,
+    filter 300ms ease;
+}
+@media (hover: hover) {
+  .usc-cta:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04) saturate(1.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 16px 32px -10px rgba(234, 165, 7, 0.95),
+      0 4px 10px rgba(17, 24, 39, 0.1);
+  }
+  .usc-cta:hover .text-roll span {
+    transform: translateY(-100%);
+  }
+}
+.usc-cta:active {
+  transform: translateY(0) scale(0.98);
+}
+.usc-cta:focus-visible {
+  outline: 2px solid #1e7fc2;
+  outline-offset: 3px;
+}
+/* The glint — painted between the fill and the label (z-index -1 inside the
+ * isolated pill), clipped to the pill by its overflow. */
+.usc-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 70%
+  );
+  transform: translateX(-130%);
+  animation: usc-cta-glint 4.5s ease-in-out 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes usc-cta-glint {
+  0% {
+    transform: translateX(-130%);
+  }
+  30%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+/* Hero button: a halo swells and fades around it (box-shadow is not clipped
+ * by the pill's overflow) */
+.usc-cta--pulse {
+  animation: usc-cta-pulse 2.8s ease-out 1.2s infinite;
+}
+.usc-cta--pulse:hover {
+  animation: none;
+}
+@keyframes usc-cta-pulse {
+  0% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 10px 24px -8px rgba(234, 165, 7, 0.75),
+      0 2px 6px rgba(17, 24, 39, 0.08),
+      0 0 0 0 rgba(245, 185, 21, 0.6);
+  }
+  70%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 10px 24px -8px rgba(234, 165, 7, 0.75),
+      0 2px 6px rgba(17, 24, 39, 0.08),
+      0 0 0 16px rgba(245, 185, 21, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .usc-cta,
+  .usc-cta--pulse {
+    animation: none;
+    transition: none;
+  }
+  .usc-cta::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 @keyframes slide-up {
   from {
     transform: translateY(100%);

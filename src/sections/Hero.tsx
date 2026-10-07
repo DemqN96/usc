@@ -1,7 +1,5 @@
-import { ArrowRight } from 'lucide-react'
-
 import { SiteNav } from '../components/Nav'
-import { TextRoll } from '../components/ui'
+import { Cta } from '../components/ui'
 
 import uscLogoSplash from '../assets/usc-logo-splash.webp'
 
@@ -51,15 +49,9 @@ export function Hero() {
             className="animate-hero-in mt-7 flex justify-center sm:mt-10"
             style={{ animationDelay: '420ms' }}
           >
-            <a
-              href="#catalog"
-              className="group inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
-            >
-              <TextRoll>Перейти до каталогу</TextRoll>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45 sm:h-8 sm:w-8">
-                <ArrowRight size={16} className="text-gray-900" />
-              </span>
-            </a>
+            <Cta href="#catalog" size="lg" pulse>
+              Перейти до каталогу
+            </Cta>
           </div>
         </div>
       </div>

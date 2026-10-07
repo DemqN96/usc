@@ -1,6 +1,4 @@
-import { ArrowRight } from 'lucide-react'
-
-import { Reveal, TextRoll, BadgeRow } from '../components/ui'
+import { Reveal, Cta, BadgeRow } from '../components/ui'
 
 import zavodBalls from '../assets/zavod1.jpg'
 import aboutKran from '../assets/about-kran.jpg'
@@ -18,15 +16,9 @@ const VALUE_PILLARS = [
 
 export function About() {
   const CtaButton = (
-    <a
-      href="#catalog"
-      className="group inline-flex items-center gap-3 self-start rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
-    >
-      <TextRoll>Дивитися продукцію</TextRoll>
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45 sm:h-8 sm:w-8">
-        <ArrowRight size={16} className="text-gray-900" />
-      </span>
-    </a>
+    <Cta href="#catalog" className="self-start">
+      Дивитися продукцію
+    </Cta>
   )
 
   return (

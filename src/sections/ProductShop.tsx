@@ -5,7 +5,7 @@ import { PRODUCT_CATEGORIES, type ProductCategory, type ProductType } from '../p
 import { getGroups, type ProductGroup } from '../productGroups'
 import { catCount, typeSizeCount, plural } from '../lib/catalog'
 import { CATEGORY_JUMP_EVENT } from '../lib/paths'
-import { TextRoll, ValveMark } from '../components/ui'
+import { Cta, ValveMark } from '../components/ui'
 
 type SelectedProduct = { cat: ProductCategory; item: string }
 type SelectedType = { cat: ProductCategory; type: ProductType }
@@ -435,16 +435,9 @@ function ProductModal({
           {product.cat.note && (
             <p className="mt-3 text-[13px] leading-[1.6] text-gray-500">{product.cat.note}</p>
           )}
-          <a
-            href="#contact-details"
-            onClick={onClose}
-            className="group mt-5 inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:text-[14px]"
-          >
-            <TextRoll>Залишити запит</TextRoll>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
-              <ArrowRight size={15} className="text-gray-900" />
-            </span>
-          </a>
+          <Cta href="#contact-details" onClick={onClose} className="mt-5">
+            Залишити запит
+          </Cta>
         </div>
       </div>
     </div>
@@ -558,16 +551,9 @@ function GroupModal({
             </p>
           )}
 
-          <a
-            href="#contact-details"
-            onClick={onClose}
-            className="group mt-6 inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:text-[14px]"
-          >
-            <TextRoll>Залишити запит</TextRoll>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
-              <ArrowRight size={15} className="text-gray-900" />
-            </span>
-          </a>
+          <Cta href="#contact-details" onClick={onClose} className="mt-6">
+            Залишити запит
+          </Cta>
         </div>
       </div>
     </div>
@@ -664,16 +650,9 @@ export function TypeModal({
             </div>
           ))}
 
-          <a
-            href="#contact-details"
-            onClick={onClose}
-            className="group mt-6 inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:text-[14px]"
-          >
-            <TextRoll>Залишити запит</TextRoll>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
-              <ArrowRight size={15} className="text-gray-900" />
-            </span>
-          </a>
+          <Cta href="#contact-details" onClick={onClose} className="mt-6">
+            Залишити запит
+          </Cta>
         </div>
       </div>
     </div>

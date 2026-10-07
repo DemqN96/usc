@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import { ArrowRight, ShieldCheck } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 
 import { PRODUCT_CATEGORIES } from '../products'
 import { ProductShop } from './ProductShop'
-import { BadgeRow, Reveal, TextRoll } from '../components/ui'
+import { BadgeRow, Cta, Reveal } from '../components/ui'
 import { KranyCover, ProteCover } from '../components/BrandCover'
 import { plural } from '../lib/catalog'
 import { KRANY_URL, PROTE_URL, proteTechHref } from '../lib/paths'
@@ -136,15 +136,7 @@ function LineCard({
         </ul>
         {/* pinned to the bottom so both cards' buttons line up */}
         <div className="mt-auto pt-7">
-          <a
-            href={href}
-            className="group/cta inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
-          >
-            <TextRoll>{cta}</TextRoll>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover/cta:-rotate-45 sm:h-8 sm:w-8">
-              <ArrowRight size={16} className="text-gray-900" />
-            </span>
-          </a>
+          <Cta href={href}>{cta}</Cta>
         </div>
       </div>
     </article>

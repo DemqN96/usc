@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { ArrowRight, Gauge, ShieldCheck } from 'lucide-react'
+import { Gauge, ShieldCheck } from 'lucide-react'
 
 import { PageShell } from '../../components/PageShell'
 import { SiteNav } from '../../components/Nav'
 import { KranyCover } from '../../components/BrandCover'
-import { BadgeRow, Reveal, TextRoll } from '../../components/ui'
+import { BadgeRow, Cta, Reveal } from '../../components/ui'
 import { ContactGrid } from '../../sections/Contacts'
 import { TypeCards, TypeModal } from '../../sections/ProductShop'
 import { PRODUCT_CATEGORIES, type ProductCategory, type ProductType } from '../../products'
@@ -75,15 +75,7 @@ export function KranyPage() {
                 ))}
               </dl>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <a
-                  href="#types"
-                  className="group/cta inline-flex items-center gap-3 rounded-full bg-[#F5B915] py-2 pl-5 pr-2 text-[13px] font-medium text-gray-900 transition-colors hover:bg-[#e0a70f] sm:pl-6 sm:text-[14px]"
-                >
-                  <TextRoll>Дивитись типорозміри</TextRoll>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover/cta:-rotate-45 sm:h-8 sm:w-8">
-                    <ArrowRight size={16} className="text-gray-900" />
-                  </span>
-                </a>
+                <Cta href="#types">Дивитись типорозміри</Cta>
                 <a
                   href="#contact-details"
                   className="inline-flex items-center rounded-full border border-gray-200 px-5 py-2.5 text-[13px] font-medium text-gray-800 transition-colors hover:border-[#1E7FC2] hover:text-[#1E7FC2] sm:text-[14px]"
