@@ -207,7 +207,7 @@ function Nav({
               className="h-9 w-9 rounded-full object-cover sm:h-10 sm:w-10"
             />
           </a>
-          <ul className="hidden items-center gap-6 lg:flex">
+          <ul className="hidden items-center gap-5 lg:flex xl:gap-6">
             {NAV_ITEMS.map((item) => {
               if (item.kind === 'group') {
                 return (
@@ -234,7 +234,8 @@ function Nav({
                     }`}
                   >
                     {item.kind === 'page' && item.logo ? (
-                      <img src={item.logo} alt="" className="h-[15px] w-auto" />
+                      // max-w-none: with the preflight max-width:100% the logo collapses to 0 in a tight row
+                      <img src={item.logo} alt="" className="h-[15px] w-auto max-w-none" />
                     ) : (
                       item.label
                     )}
@@ -251,18 +252,18 @@ function Nav({
           </ul>
         </div>
 
-        {/* Right (desktop) */}
+        {/* Right (desktop) — clock from xl, tagline from 1360px; below that the links need the room */}
         <div className="hidden items-center gap-5 lg:flex">
-          <span className="hidden text-[13px] text-gray-600 lg:inline">
+          <span className="hidden whitespace-nowrap text-[13px] text-gray-600 min-[1360px]:inline">
             Лише краще обладнання
           </span>
-          <span className="flex items-center gap-1.5 text-[13px] text-gray-600">
+          <span className="hidden items-center gap-1.5 whitespace-nowrap text-[13px] text-gray-600 xl:flex">
             <Clock size={14} />
             {time} Київ
           </span>
           <a
             href="#"
-            className="group flex items-center gap-3 rounded-full bg-[#4A4D52] py-2 pl-5 pr-2 text-[13px] font-medium text-white"
+            className="group flex shrink-0 items-center gap-3 whitespace-nowrap rounded-full bg-[#4A4D52] py-2 pl-5 pr-2 text-[13px] font-medium text-white"
           >
             <TextRoll>Замовити дзвінок</TextRoll>
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">

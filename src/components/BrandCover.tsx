@@ -1,9 +1,18 @@
 import proteForest from '../assets/prote-forest.jpg'
 import proteWordmark from '../assets/prote-wordmark.png'
 import proteLogo from '../assets/prote-logo.png'
-import kranyCover from '../assets/krany-cover.jpg'
+import kranyCover from '../assets/krany-cover.webp'
 import uscEmblem from '../assets/usc-emblem.webp'
 import uscWordmark from '../assets/usc-wordmark.png'
+
+/** Photo strip heights. `fit` keeps the 3:1 proportions of the valve collage
+ *  from `sm` up, so the products are never cut off at the top or bottom (on
+ *  phones a 150px strip that trims the sides reads better than a thin sliver);
+ *  `band` is a fixed-height strip for landscape photos, which crop well. */
+const STRIP = {
+  fit: 'h-[150px] sm:h-auto sm:aspect-[3/1]',
+  band: 'h-[150px] sm:h-[210px] lg:h-[240px]',
+}
 
 /** Product-line cover — a wide photo with the brand lockup (round mark +
  *  wordmark) meeting on its lower edge. The parent needs the `group` class for
@@ -15,7 +24,7 @@ export function BrandCover({
   logoAlt,
   wordmark,
   wordmarkAlt,
-  size = 'lg',
+  strip = 'fit',
 }: {
   cover: string
   coverAlt: string
@@ -23,16 +32,12 @@ export function BrandCover({
   logoAlt: string
   wordmark: string
   wordmarkAlt: string
-  /** `md` — shorter cover for the half-width cards on the home page */
-  size?: 'md' | 'lg'
+  /** covers shown side by side must use the same strip so their heights match */
+  strip?: keyof typeof STRIP
 }) {
   return (
     <div className="relative">
-      <div
-        className={`w-full overflow-hidden ${
-          size === 'lg' ? 'h-[150px] sm:h-[210px] lg:h-[240px]' : 'h-[150px] sm:h-[180px]'
-        }`}
-      >
+      <div className={`w-full overflow-hidden ${STRIP[strip]}`}>
         <img
           src={cover}
           alt={coverAlt}
@@ -54,7 +59,7 @@ export function BrandCover({
 }
 
 /** PROTE partner line: USC mark × PROTE wordmark on the forest photo. */
-export function ProteCover({ size }: { size?: 'md' | 'lg' }) {
+export function ProteCover({ strip }: { strip?: keyof typeof STRIP }) {
   return (
     <BrandCover
       cover={proteForest}
@@ -63,13 +68,13 @@ export function ProteCover({ size }: { size?: 'md' | 'lg' }) {
       logoAlt="USC — Ukrainian Santechnical Company"
       wordmark={proteWordmark}
       wordmarkAlt="PROTE"
-      size={size}
+      strip={strip}
     />
   )
 }
 
 /** USC ball valves: USC emblem × USC wordmark on the product photos. */
-export function KranyCover({ size }: { size?: 'md' | 'lg' }) {
+export function KranyCover() {
   return (
     <BrandCover
       cover={kranyCover}
@@ -78,7 +83,6 @@ export function KranyCover({ size }: { size?: 'md' | 'lg' }) {
       logoAlt="USC — Ukrainian Santechnical Company"
       wordmark={uscWordmark}
       wordmarkAlt="USC"
-      size={size}
     />
   )
 }

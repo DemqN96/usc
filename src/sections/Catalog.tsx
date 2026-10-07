@@ -34,7 +34,7 @@ export function Catalog() {
         <Reveal delay={80} className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           <LineCard
             id="krany"
-            cover={<KranyCover size="md" />}
+            cover={<KranyCover />}
             badge="Власне виробництво"
             title="Кульові крани USC"
             text="Сталеві кульові крани TM USC — фланцеві, приварні, муфтові, комбіновані та для підземного встановлення. DN15–700, PN16–PN40."
@@ -44,7 +44,7 @@ export function Catalog() {
           />
           <LineCard
             id="prote"
-            cover={<ProteCover size="md" />}
+            cover={<ProteCover />}
             badge="Ексклюзивний представник в Україні"
             title="Технології PROTE"
             text="Кондиціювання води, переробка осаду на добриво, рекультивація водойм і ремедіація ґрунтів — рішення PROTE Technologies for our Environment LLC (Польща)."
