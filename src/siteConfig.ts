@@ -17,12 +17,22 @@ const env = import.meta.env
 export const PHONE_PRIMARY = env.VITE_PHONE_PRIMARY ?? '+380963235506'
 export const PHONE_SECONDARY = env.VITE_PHONE_SECONDARY ?? '+380504811035'
 
-/** Public contact email. */
+/** Public contact emails — both are read by the sales team (confirmed
+ *  2026-10-08). Leads that fall back to email go to both. */
 export const EMAIL = env.VITE_EMAIL ?? 'yskpro@ukr.net'
+export const EMAIL_SECONDARY = env.VITE_EMAIL_SECONDARY ?? 'usc.yvc@gmail.com'
+export const EMAILS = [EMAIL, EMAIL_SECONDARY].filter(Boolean)
 
 /** Social profile URLs — empty string means "not configured" (link hidden). */
-export const FACEBOOK_URL = env.VITE_FACEBOOK_URL ?? ''
+export const FACEBOOK_URL = env.VITE_FACEBOOK_URL ?? 'https://www.facebook.com/usc.yvc'
 export const INSTAGRAM_URL = env.VITE_INSTAGRAM_URL ?? ''
+
+/** Messengers — the client uses them on the primary phone (confirmed
+ *  2026-10-08). An empty VITE_*_URL hides that messenger. */
+const phoneDigits = PHONE_PRIMARY.replace(/\D/g, '')
+export const VIBER_URL = env.VITE_VIBER_URL ?? `viber://chat?number=%2B${phoneDigits}`
+export const TELEGRAM_URL = env.VITE_TELEGRAM_URL ?? `https://t.me/+${phoneDigits}`
+export const WHATSAPP_URL = env.VITE_WHATSAPP_URL ?? `https://wa.me/${phoneDigits}`
 
 /**
  * Dealer-form submission endpoint (CRM webhook or form service).

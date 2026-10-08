@@ -1,7 +1,10 @@
 import { Phone, Mail, MapPin, Facebook, FileText, ShieldCheck, Award, Download } from 'lucide-react'
 
-import { PHONE_PRIMARY, EMAIL, FACEBOOK_URL, formatPhone } from '../siteConfig'
+import type { CSSProperties } from 'react'
+
+import { PHONE_PRIMARY, EMAILS, FACEBOOK_URL, formatPhone } from '../siteConfig'
 import { Reveal, BadgeRow } from '../components/ui'
+import { MESSENGERS, linkTarget } from '../components/Messengers'
 import { DOCS_URL } from '../lib/paths'
 import atest from '../assets/atest-protequest12.jpg'
 
@@ -15,7 +18,7 @@ export function ContactsSection() {
   return (
     <section
       id="contacts"
-      className="relative overflow-hidden pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28"
+      className="relative overflow-hidden pb-16 pt-12 sm:pb-20 sm:pt-14 lg:pb-20 lg:pt-16"
     >
       {/* Soft depth wash — decorative only */}
       <div
@@ -107,15 +110,39 @@ export function ContactGrid() {
         >
           {formatPhone(PHONE_PRIMARY)}
         </a>
+        {MESSENGERS.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {MESSENGERS.map(({ id, label, href, Icon, color }) => (
+              <a
+                key={id}
+                href={href}
+                {...linkTarget(href)}
+                aria-label={`Написати у ${label}`}
+                className="group/m inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-2.5 py-1 text-[12px] font-medium text-gray-700 ring-1 ring-gray-100 transition-colors hover:bg-[var(--brand)] hover:text-white hover:ring-transparent"
+                style={{ '--brand': color } as CSSProperties}
+              >
+                <Icon size={14} className="text-[var(--brand)] transition-colors group-hover/m:text-white" />
+                {label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
-      <a
-        href={`mailto:${EMAIL}`}
-        className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]"
-      >
+      <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
         <Mail size={22} className="text-[#1E7FC2]" />
         <span className="text-[13px] text-gray-500">Email</span>
-        <span className="text-[15px] font-semibold text-gray-900">{EMAIL}</span>
-      </a>
+        <div className="flex flex-col gap-1">
+          {EMAILS.map((e) => (
+            <a
+              key={e}
+              href={`mailto:${e}`}
+              className="break-all text-[15px] font-semibold text-gray-900 transition-colors hover:text-[#1E7FC2]"
+            >
+              {e}
+            </a>
+          ))}
+        </div>
+      </div>
       <div className="flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)]">
         <MapPin size={22} className="text-[#1E7FC2]" />
         <span className="text-[13px] text-gray-500">Адреса</span>

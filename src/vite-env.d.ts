@@ -4,8 +4,12 @@ interface ImportMetaEnv {
   readonly VITE_PHONE_PRIMARY?: string
   readonly VITE_PHONE_SECONDARY?: string
   readonly VITE_EMAIL?: string
+  readonly VITE_EMAIL_SECONDARY?: string
   readonly VITE_FACEBOOK_URL?: string
   readonly VITE_INSTAGRAM_URL?: string
+  readonly VITE_VIBER_URL?: string
+  readonly VITE_TELEGRAM_URL?: string
+  readonly VITE_WHATSAPP_URL?: string
   readonly VITE_FORM_ENDPOINT?: string
 }
 

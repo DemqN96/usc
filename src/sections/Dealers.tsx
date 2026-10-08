@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react'
-import { ArrowRight, CheckCircle2, X } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowRight, CheckCircle2 } from 'lucide-react'
 
-import { PHONE_PRIMARY, EMAIL, FORM_ENDPOINT, formatPhone } from '../siteConfig'
 import { Reveal, BadgeRow } from '../components/ui'
+import { ConsentField, DirectContacts, MailFallbackNotice } from '../components/LeadParts'
+import { leadMailto, sendLead, type LeadField } from '../lib/leads'
+
+const SUBJECT = 'Заявка на дилерство з сайту USC'
 
 const DEALER_BENEFITS = [
   {
@@ -19,110 +22,33 @@ const DEALER_BENEFITS = [
   },
 ]
 
-/** Minimal, on-page notice about how the dealer form's personal data is
- *  processed — makes the checkbox consent an *informed* consent per the Law
- *  of Ukraine "Про захист персональних даних" (№ 2297-VI, ст. 8, 12). This is
- *  intentionally short: a lead form, not a full privacy-policy document. */
-function PrivacyModal({ onClose }: { onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Обробка персональних даних"
-    >
-      <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="animate-modal-in relative z-10 flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Закрити"
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow transition-colors hover:bg-gray-100"
-        >
-          <X size={18} />
-        </button>
-        <div className="min-h-0 flex-1 overflow-y-auto p-6 pr-14 sm:p-8 sm:pr-16">
-          <h4 className="text-[17px] font-semibold text-gray-900 sm:text-[19px]">
-            Обробка персональних даних
-          </h4>
-          <div className="mt-4 space-y-3 text-[13.5px] leading-[1.7] text-gray-600">
-            <p>
-              Заповнюючи цю форму, ви передаєте{' '}
-              <span className="font-medium text-gray-900">ТОВ «ЮСК.ПРО»</span> (ЄДРПОУ
-              46315118, 03151, м. Київ, вул. Волинська, 48/50, офіс 516) свої
-              персональні дані: ім’я, назву компанії, email та номер телефону.
-            </p>
-            <p>
-              Дані використовуються виключно для розгляду вашої заявки на
-              партнерство чи дилерство та зворотного зв’язку з вами. Ми не передаємо
-              їх третім особам, окрім сервісів, що технічно забезпечують доставку
-              заявки до нашого відділу продажів.
-            </p>
-            <p>
-              Обробка здійснюється на підставі вашої згоди відповідно до Закону
-              України «Про захист персональних даних» № 2297-VI. Ви маєте право
-              будь-коли відкликати згоду, а також отримати, виправити чи вимагати
-              видалення своїх даних — для цього напишіть на{' '}
-              <a href={`mailto:${EMAIL}`} className="font-medium text-[#1E7FC2] hover:underline">
-                {EMAIL}
-              </a>{' '}
-              або зателефонуйте на{' '}
-              <a
-                href={`tel:${PHONE_PRIMARY}`}
-                className="font-medium text-[#1E7FC2] hover:underline"
-              >
-                {formatPhone(PHONE_PRIMARY)}
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export function DealersSection() {
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '' })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  /** `sent` — the endpoint took it; `mail` — handed to the visitor's mail app */
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'mail' | 'error'>('idle')
   /** Consent to process personal data (Law of Ukraine "Про захист персональних
    *  даних" № 2297-VI) — required before the form may be submitted. */
   const [consent, setConsent] = useState(false)
-  const [privacyOpen, setPrivacyOpen] = useState(false)
 
   const update =
     (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
+
+  const fields: LeadField[] = [
+    { key: 'name', label: 'Ім’я', value: form.name },
+    { key: 'company', label: 'Компанія', value: form.company },
+    { key: 'email', label: 'Email', value: form.email },
+    { key: 'phone', label: 'Телефон', value: form.phone },
+  ]
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!consent) return
     setStatus('sending')
     try {
-      // Deliver the lead to the CRM / form backend. The destination is set via
-      // VITE_FORM_ENDPOINT (see .env.example), so the CRM can be swapped without
-      // code changes. While the endpoint is empty we succeed optimistically.
-      if (FORM_ENDPOINT) {
-        const res = await fetch(FORM_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            ...form,
-            source: 'USC landing — dealer application',
-            submittedAt: new Date().toISOString(),
-          }),
-        })
-        if (!res.ok) throw new Error(`Form endpoint responded ${res.status}`)
-      } else if (import.meta.env.DEV) {
-        console.warn('VITE_FORM_ENDPOINT is not set — the application was not delivered.')
-      }
-      setStatus('success')
+      // To the CRM / form backend when VITE_FORM_ENDPOINT is set, otherwise via
+      // the visitor's mail app — a lead is never reported as sent when it wasn't.
+      setStatus(await sendLead('dealer', SUBJECT, fields))
     } catch (err) {
       console.error('Dealer form submission failed:', err)
       setStatus('error')
@@ -130,7 +56,7 @@ export function DealersSection() {
   }
 
   return (
-    <section id="dealers" className="pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
+    <section id="dealers" className="pb-12 pt-12 sm:pb-14 sm:pt-14 lg:pb-16 lg:pt-16">
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="3" label="Партнерам та дилерам" />
@@ -165,7 +91,11 @@ export function DealersSection() {
 
           {/* Form */}
           <div className="rounded-2xl bg-[#F5F5F5] p-6 sm:p-8">
-            {status === 'success' ? (
+            {status === 'mail' ? (
+              <div className="flex h-full min-h-[280px] items-center justify-center">
+                <MailFallbackNotice mailto={leadMailto(SUBJECT, fields)} />
+              </div>
+            ) : status === 'sent' ? (
               <div className="flex h-full min-h-[280px] flex-col items-center justify-center text-center">
                 <CheckCircle2 size={48} className="mb-4 text-[#1E7FC2]" />
                 <p className="text-[18px] font-semibold text-gray-900">Заявку надіслано!</p>
@@ -225,33 +155,13 @@ export function DealersSection() {
                   />
                 </div>
 
-                <label className="flex items-start gap-2.5 text-[12.5px] leading-[1.5] text-gray-600">
-                  <input
-                    required
-                    type="checkbox"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    disabled={status === 'sending'}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1E7FC2] focus:ring-[#1E7FC2] disabled:opacity-60"
-                  />
-                  <span>
-                    Я даю згоду на обробку моїх персональних даних відповідно до
-                    Закону України «Про захист персональних даних».{' '}
-                    <button
-                      type="button"
-                      onClick={() => setPrivacyOpen(true)}
-                      className="font-medium text-[#1E7FC2] underline underline-offset-2 hover:text-[#175f92]"
-                    >
-                      Детальніше
-                    </button>
-                  </span>
-                </label>
+                <ConsentField checked={consent} onChange={setConsent} disabled={status === 'sending'} />
 
                 {status === 'error' && (
-                  <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-[13px] text-red-600">
-                    Не вдалося надіслати заявку. Спробуйте ще раз або зателефонуйте
-                    нам за вказаними контактами.
-                  </p>
+                  <div className="rounded-lg bg-red-50 px-4 py-3 text-center text-[13px] text-red-600">
+                    Не вдалося надіслати заявку. Спробуйте ще раз або зв’яжіться з нами напряму:
+                    <DirectContacts className="mt-3" />
+                  </div>
                 )}
                 <button
                   type="submit"
@@ -271,7 +181,6 @@ export function DealersSection() {
           </div>
         </Reveal>
       </div>
-      {privacyOpen && <PrivacyModal onClose={() => setPrivacyOpen(false)} />}
     </section>
   )
 }

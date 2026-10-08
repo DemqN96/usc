@@ -15,6 +15,8 @@ import {
 } from '../lib/paths'
 import { FACEBOOK_URL } from '../siteConfig'
 import { TextRoll } from './ui'
+import { CallbackModal } from './CallbackModal'
+import { track } from '../lib/analytics'
 
 import uscLogo from '../assets/usc-logo.jpg'
 import proteWordmark from '../assets/prote-wordmark.png'
@@ -193,6 +195,7 @@ function Nav({
   onToggleMenu: () => void
 }) {
   const time = useKyivTime()
+  const [callbackOpen, setCallbackOpen] = useState(false)
   return (
     <div className="relative z-[60] mx-auto w-full max-w-[1440px] px-3 pt-3 sm:px-6 sm:pt-6">
       <nav className="flex items-center justify-between rounded-full bg-white p-2 shadow-[0_2px_12px_rgba(0,0,0,0.06)] sm:p-3">
@@ -263,16 +266,22 @@ function Nav({
             <Clock size={14} />
             {time} Київ
           </span>
-          <a
-            href="#"
+          <button
+            type="button"
+            onClick={() => {
+              setCallbackOpen(true)
+              track('open_callback')
+            }}
+            aria-haspopup="dialog"
             className="group flex shrink-0 items-center gap-3 whitespace-nowrap rounded-full bg-[#4A4D52] py-2 pl-5 pr-2 text-[13px] font-medium text-white"
           >
             <TextRoll>Замовити дзвінок</TextRoll>
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white transition-transform duration-500 group-hover:-rotate-45">
               <ArrowRight size={14} className="text-[#4A4D52]" />
             </span>
-          </a>
+          </button>
         </div>
+        {callbackOpen && <CallbackModal onClose={() => setCallbackOpen(false)} />}
 
         {/* Mobile toggle */}
         <BurgerButton open={menuOpen} onClick={onToggleMenu} />

@@ -1,6 +1,7 @@
 import { Facebook, Instagram } from 'lucide-react'
 
-import { PHONE_PRIMARY, EMAIL, FACEBOOK_URL, INSTAGRAM_URL, formatPhone } from '../siteConfig'
+import { PHONE_PRIMARY, EMAILS, FACEBOOK_URL, INSTAGRAM_URL, formatPhone } from '../siteConfig'
+import { MESSENGERS, linkTarget } from './Messengers'
 import { HOME_URL, KRANY_URL, PROTE_URL, sectionHref, type PageId } from '../lib/paths'
 import uscLogo from '../assets/usc-logo.jpg'
 
@@ -73,15 +74,28 @@ export function Footer({ page }: { page: PageId }) {
                   {formatPhone(PHONE_PRIMARY)}
                 </a>
               </li>
-              <li>
-                <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-white">
-                  {EMAIL}
-                </a>
-              </li>
+              {EMAILS.map((e) => (
+                <li key={e}>
+                  <a href={`mailto:${e}`} className="transition-colors hover:text-white">
+                    {e}
+                  </a>
+                </li>
+              ))}
               <li className="leading-[1.5]">03151, м. Київ, вул. Волинська, 48/50</li>
             </ul>
-            {(FACEBOOK_URL || INSTAGRAM_URL) && (
+            {(MESSENGERS.length > 0 || FACEBOOK_URL || INSTAGRAM_URL) && (
               <div className="mt-5 flex items-center gap-2">
+                {MESSENGERS.map(({ id, label, href, Icon }) => (
+                  <a
+                    key={id}
+                    href={href}
+                    {...linkTarget(href)}
+                    aria-label={label}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
                 {FACEBOOK_URL && (
                   <a
                     href={FACEBOOK_URL}
