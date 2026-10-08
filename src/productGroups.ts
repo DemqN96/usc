@@ -18,6 +18,9 @@ import rizbaKorotka from './assets/rizba-korotka.png'
 import rizbaDovga from './assets/rizba-dovga.png'
 import rizbaDvostoronnya from './assets/rizba-dvostoronnya.png'
 import perehidManometr from './assets/perehid-manometr.png'
+import bobyshka from './assets/bobyshka.webp'
+import zaglushkaStalna from './assets/zaglushka-stalna.webp'
+import khomutVriznyy from './assets/khomut-vriznyy.webp'
 
 export type ProductGroup = {
   id: string
@@ -148,6 +151,7 @@ const REDUCERS_RULES: Rule[] = [
   {
     id: 'bobyshka',
     name: 'Бобишка',
+    image: bobyshka,
     blurb:
       'Бобишка — приварний штуцер для монтажу манометра або термометра на трубопровід чи посудину. Виконання під ключ s24 / s32, довжини L35–L50 мм.',
     columns: ['Виконання'],
@@ -157,6 +161,7 @@ const REDUCERS_RULES: Rule[] = [
   {
     id: 'zaglushka',
     name: 'Заглушка стальна',
+    image: zaglushkaStalna,
     blurb:
       'Заглушка сталева різьбова для герметичного закриття вільного кінця труби або невикористаного відводу. Внутрішня та зовнішня різьба, d15–d20.',
     columns: ['Діаметр d, мм', 'Різьба'],
@@ -172,6 +177,7 @@ const TAPPING_RULES: Rule[] = [
   {
     id: 'vrizniy-homut',
     name: 'Хомут врізний універсальний',
+    image: khomutVriznyy,
     blurb:
       'Універсальний врізний хомут із нержавіючої сталі для влаштування відводу від діючого трубопроводу без зупинки подачі. Відведення — фланець DN50–250 або різьба 2″, довжина корпусу L200–500 мм.',
     columns: ['DN труби, мм'],

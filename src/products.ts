@@ -20,6 +20,12 @@ import flanetsPloskyy from './assets/flanets-ploskyy.jpg'
 import kmch from './assets/kmch.jpg'
 import yashchykMontazhnyy from './assets/yashchyk-montazhnyy.jpg'
 import adapterLichylnykaGazu from './assets/adapter-lichylnyka-gazu.jpg'
+import zasuvkaShyberna from './assets/zasuvka-shyberna.webp'
+import zasuvkaStalna from './assets/zasuvka-stalna-30s41nzh.webp'
+import zasuvkaBatterflyay from './assets/zasuvka-batterflyay.webp'
+import flanetsKomirtsevyy from './assets/flanets-komirtsevyy.webp'
+import lyukSadovyyA15 from './assets/lyuk-sadovyy-a15.webp'
+import doshchopryymachDbV125 from './assets/doshchopryymach-db-v125.webp'
 
 export type ProductSize = { dn: number; pn: number; code?: string }
 export type ProductVariant = { label: string; sizes: ProductSize[] }
@@ -213,6 +219,9 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
     itemImages: {
       "ЗАСУВКА ФЛАНЦЕВА З ОБРЕЗИНЕННИМ КЛИНОМ 30ч39бр РУ16 — DN 50–400": zasuvkaFlancevaChavunna,
       "ЗАСУВКА ФЛАНЦЕВА З ОБРЕЗИНЕННИМ КЛИНОМ 30ч36бр РУ16 — DN 50–300": zasuvkaFlancevaChavunna,
+      "ЗАСУВКА ШИБЕРНА (НОЖОВА) МІЖФЛАНЦЕВА ущільнення EPDM/NBR Ру10 — DN 50–400": zasuvkaShyberna,
+      "ЗАСУВКА ФЛАНЦЕВА СТАЛЕВА 30c41нж Ру16 — DN 50–400": zasuvkaStalna,
+      "Засувка поворотна \"Баттерфляй\" Ру16 тип-2023 чавун диск / EPDM — DN 50–400": zasuvkaBatterflyay,
     },
   },
   {
@@ -225,6 +234,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
     ],
     itemImages: {
       "Фланець плоский ГОСТ 12820-80 — DN 15–1400 (PN6/PN10/PN16/PN25)": flanetsPloskyy,
+      "Фланець комірцевий ГОСТ 12821-80 — DN 15–600 (PN16/PN40/PN63/PN100/PN160)": flanetsKomirtsevyy,
     },
   },
   {
@@ -246,6 +256,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
       "СТОВПЧИК КЛАС А15 — 700*60 мм",
     ],
     itemImages: {
+      "ЛЮК САДОВИЙ КЛАС А15 — 740*70 мм (780*70мм)": lyukSadovyyA15,
       "ЛЮК ЛЕГКИЙ КЛАС А50 — 750*100 мм": lyukLegkyyA50,
       "ЛЮК КВАДРАТНИЙ КЛАС А15 — 650*650*60 мм": lyukKvadratnyyA15,
       "ЛЮК РЕВІЗІЙНИЙ КЛАС А50 — 385*385*60 мм": lyukReviziynyyA50,
@@ -256,6 +267,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
       "ЛЮК СЕРЕДНІЙ КЛАС В125 — 830*130 мм": lyukKruglyyV125,
       "ЛЮК ВАЖКИЙ КЛАС С250 — 830*130 мм": lyukKruglyyV125,
       "СТОВПЧИК КЛАС А15 — 700*60 мм": stovpchykA15,
+      "ДОЩОПРИЙМАЧ ДБ КЛАС В125 — 920/940*490*92": doshchopryymachDbV125,
     },
   },
   {
