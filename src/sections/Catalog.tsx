@@ -23,7 +23,7 @@ const shortName = (name: string) => name.split(' — ')[0].split(' (')[0]
 
 export function Catalog() {
   return (
-    <section id="catalog" className="pb-16 pt-16 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-28">
+    <section id="catalog" className="pb-12 pt-12 sm:pb-14 sm:pt-14 lg:pb-16 lg:pt-16">
       <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="mb-8">
           <BadgeRow num="2" label="Каталог продукції" />

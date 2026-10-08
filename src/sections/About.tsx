@@ -2,6 +2,27 @@ import { Reveal, Cta, BadgeRow } from '../components/ui'
 
 import zavodBalls from '../assets/zavod1.jpg'
 import aboutKran from '../assets/about-kran.jpg'
+import uscEmblem from '../assets/usc-emblem.webp'
+
+/** Key figures — working conditions and service life from the USC catalog (p. 4). */
+const FIGURES = [
+  { value: '30', unit: 'років', label: 'термін служби крана' },
+  { value: '25 000', unit: 'циклів', label: 'ресурс «відкрито — закрито»' },
+  { value: '4,0', unit: 'МПа', label: 'максимальний робочий тиск' },
+  { value: '−40…+200', unit: '°C', label: 'температура робочого середовища' },
+  { value: 'DN15–700', unit: '', label: 'діаметри кульових кранів' },
+  { value: 'ISO 9001', unit: '', label: 'система управління якістю (2015)' },
+]
+
+/** Where USC valves work — the catalog's list of industries and media (p. 4). */
+const APPLICATIONS = [
+  'Тепломережі',
+  'Природний газ',
+  'Нафтопродукти та ПММ',
+  'Зріджені вуглеводневі гази',
+  'Житлово-комунальне господарство',
+  'Нафтопереробна та газова промисловість',
+]
 
 const VALUE_PILLARS = [
   {
@@ -22,7 +43,8 @@ export function About() {
   )
 
   return (
-    <section className="relative overflow-hidden pb-12 pt-16 sm:pb-16 sm:pt-20 lg:pb-24 lg:pt-32">
+    // overflow: clip (not hidden) clips the decorative wash without breaking the sticky imagery
+    <section className="relative overflow-hidden pb-12 pt-16 supports-[overflow:clip]:overflow-clip sm:pb-14 sm:pt-20 lg:pb-16 lg:pt-32">
       {/* Soft depth wash — decorative only, keeps the white section from reading flat */}
       <div
         className="pointer-events-none absolute -right-40 -top-32 h-[520px] w-[520px] rounded-full bg-[#1E7FC2]/[0.06] blur-3xl"
@@ -74,10 +96,44 @@ export function About() {
                 </div>
               ))}
             </div>
+
+            {/* USC in figures */}
+            <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-7 rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] sm:grid-cols-3 sm:p-8">
+              {FIGURES.map((f) => (
+                <div key={f.label} className="min-w-0">
+                  <dt className="whitespace-nowrap text-[22px] font-semibold leading-none tracking-[-0.01em] text-gray-900 sm:text-[28px]">
+                    {f.value}
+                    {f.unit && (
+                      <span className="ml-1 text-[13px] font-medium tracking-normal text-[#1E7FC2] sm:text-[14px]">
+                        {f.unit}
+                      </span>
+                    )}
+                  </dt>
+                  <dd className="mt-2 text-[12.5px] leading-[1.45] text-gray-500 sm:text-[13px]">{f.label}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {/* Applications */}
+            <div className="mt-8">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+                Сфери застосування
+              </p>
+              <ul className="flex flex-wrap gap-2">
+                {APPLICATIONS.map((a) => (
+                  <li
+                    key={a}
+                    className="rounded-full bg-[#1E7FC2]/[0.07] px-3.5 py-1.5 text-[13px] font-medium text-[#175f92]"
+                  >
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Imagery */}
-          <div className="flex flex-col gap-4 sm:flex-row lg:flex-col">
+          {/* Imagery — sticks alongside the text when the text column is the taller one */}
+          <div className="flex flex-col gap-4 sm:flex-row lg:sticky lg:top-28 lg:flex-col lg:self-start">
             <div className="group aspect-[438/346] w-full overflow-hidden rounded-2xl sm:w-1/2 lg:w-full">
               <img
                 src={zavodBalls}
@@ -95,12 +151,32 @@ export function About() {
           </div>
         </Reveal>
 
-        {/* Closing tagline */}
+        {/* Closing statement — a brand band that bridges into the catalog */}
         <Reveal delay={120}>
-          <p className="mt-12 border-t border-gray-200 pt-8 text-[16px] font-medium leading-[1.5] text-gray-900 sm:mt-16 sm:text-[20px] lg:text-[24px]">
-            Український характер. Європейська інженерія.{' '}
-            <span className="text-[#1E7FC2]">Надійність, що працює поколіннями.</span>
-          </p>
+          <div className="relative mt-12 overflow-hidden rounded-3xl bg-[#0f2a44] px-6 py-10 sm:mt-16 sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+            <div
+              className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full bg-[#1E7FC2]/50 blur-3xl"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute -bottom-36 left-1/4 h-72 w-72 rounded-full bg-[#F5B915]/20 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative flex items-center justify-between gap-10">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60 sm:text-[12px]">
+                  Український виробник запірної арматури
+                </p>
+                <p className="mt-4 max-w-[28ch] text-[24px] font-medium leading-[1.2] tracking-[-0.02em] text-white sm:text-[32px] lg:text-[40px]">
+                  Український характер. Європейська інженерія.{' '}
+                  <span className="text-[#F5B915]">Надійність, що працює поколіннями.</span>
+                </p>
+              </div>
+              <span className="hidden h-40 w-40 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_0_0_10px_rgba(255,255,255,0.08),0_12px_40px_rgba(0,0,0,0.35)] md:flex lg:h-48 lg:w-48">
+                <img src={uscEmblem} alt="" className="h-[82%] w-[82%] object-contain" />
+              </span>
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
