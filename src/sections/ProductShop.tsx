@@ -6,6 +6,8 @@ import { getGroups, type ProductGroup } from '../productGroups'
 import { catCount, typeSizeCount, plural } from '../lib/catalog'
 import { CATEGORY_JUMP_EVENT } from '../lib/paths'
 import { Cta, ValveMark } from '../components/ui'
+import { KRANY_SPECS, KV } from '../kranySpecs'
+import { track } from '../lib/analytics'
 
 type SelectedProduct = { cat: ProductCategory; item: string }
 type SelectedType = { cat: ProductCategory; type: ProductType }
@@ -576,6 +578,13 @@ export function TypeModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  useEffect(() => track('view_size_table', { type: type.name, category: cat.name }), [type.name, cat.name])
+
+  /* Ball valves carry the catalog's dimension tables and drawing */
+  const specs = cat.id === 'ball-valves' ? KRANY_SPECS[type.id] : undefined
+  const cols = specs?.columns ?? []
+  const legend = cols.filter((c) => c.hint)
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -584,7 +593,11 @@ export function TypeModal({
       aria-label={type.name}
     >
       <div className="animate-overlay-in absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="animate-modal-in relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div
+        className={`animate-modal-in relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ${
+          !specs ? 'max-w-2xl' : cols.length > 11 ? 'max-w-6xl' : 'max-w-5xl'
+        }`}
+      >
         <button
           type="button"
           onClick={onClose}
@@ -594,65 +607,138 @@ export function TypeModal({
           <X size={18} />
         </button>
 
-        {/* Header — description */}
-        <div className="border-b border-gray-100 p-5 pr-14 sm:p-6 sm:pr-16">
-          <span className="text-[12px] font-medium text-[#1E7FC2]">{cat.name}</span>
-          <h4 className="mt-1 text-[17px] font-semibold leading-[1.3] text-gray-900 sm:text-[19px]">
-            {type.name}
-          </h4>
-          {type.blurb && (
-            <p className="mt-2 text-[13px] leading-[1.6] text-gray-500">{type.blurb}</p>
-          )}
-        </div>
-
-        {/* Scrollable size tables (grouped by bore variant) */}
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-6">
-          {type.variants.map((v, vi) => (
-            <div key={vi} className={vi > 0 ? 'mt-6' : ''}>
-              {v.label && (
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="text-[13px] font-semibold text-gray-800">{v.label}</span>
-                  <span className="text-[12px] text-gray-400">{v.sizes.length} шт.</span>
-                </div>
+        {/* Scrollable body: description (+ drawing and legend), then the size tables */}
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <div
+            className={`border-b border-gray-100 p-5 pr-14 sm:p-6 sm:pr-16 ${
+              specs ? 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,380px)] md:gap-8' : ''
+            }`}
+          >
+            <div>
+              <span className="text-[12px] font-medium text-[#1E7FC2]">{cat.name}</span>
+              <h4 className="mt-1 text-[17px] font-semibold leading-[1.3] text-gray-900 sm:text-[19px]">
+                {type.name}
+              </h4>
+              {type.blurb && (
+                <p className="mt-2 text-[13px] leading-[1.6] text-gray-500">{type.blurb}</p>
               )}
-              <div className="overflow-hidden rounded-xl border border-gray-100">
-                <table className="w-full border-collapse text-left text-[12.5px]">
-                  <thead>
-                    <tr className="bg-gray-50 text-[11px] uppercase tracking-wide text-gray-500">
-                      <th className="px-3 py-2 font-medium">DN</th>
-                      <th className="px-3 py-2 font-medium">PN</th>
-                      <th className="px-3 py-2 font-medium">Артикул</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {v.sizes.map((s, si) => {
-                      const reductor = !!s.code && s.code.includes('.302')
-                      return (
-                        <tr key={si} className="border-t border-gray-100">
-                          <td className="whitespace-nowrap px-3 py-1.5 font-medium text-gray-900">
-                            DN{s.dn}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-1.5 text-gray-600">PN{s.pn}</td>
-                          <td className="px-3 py-1.5">
-                            <span className="font-mono text-[11.5px] text-gray-700">{s.code}</span>
-                            {reductor && (
-                              <span className="ml-2 whitespace-nowrap rounded bg-[#F5B915]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#8a6d0b]">
-                                редуктор
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              {legend.length > 0 && (
+                <dl className="mt-4 grid grid-cols-1 gap-x-5 gap-y-1 text-[12px] leading-[1.45] sm:grid-cols-2">
+                  {legend.map((c) => (
+                    <div key={c.key} className="flex gap-1.5">
+                      <dt className="w-6 shrink-0 font-semibold text-gray-900">{c.key}</dt>
+                      <dd className="text-gray-500">{c.hint}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
             </div>
-          ))}
+            {specs && (
+              <figure className="mt-4 md:mt-0">
+                <img
+                  src={specs.scheme}
+                  alt={`Креслення: ${type.name.toLowerCase()} — позначення розмірів`}
+                  className="max-h-[200px] w-full rounded-xl border border-gray-100 bg-white object-contain p-2"
+                />
+                <figcaption className="mt-1.5 text-[11px] text-gray-400">
+                  Креслення з каталогу USC 2026
+                </figcaption>
+              </figure>
+            )}
+          </div>
 
-          <Cta href="#contact-details" onClick={onClose} className="mt-6">
-            Залишити запит
-          </Cta>
+          <div className="px-5 py-4 sm:px-6">
+            {specs && (
+              <p className="mb-3 text-[12px] text-gray-500">
+                Розміри — у мм, маса — у кг, Kv — пропускна здатність, м³/год.
+              </p>
+            )}
+            {type.variants.map((v, vi) => {
+              const bore = v.label.startsWith('Завуж') ? 'СП' : v.label.startsWith('Повн') ? 'ПП' : ''
+              const withKv = !!specs && bore !== ''
+              return (
+                <div key={vi} className={vi > 0 ? 'mt-6' : ''}>
+                  {v.label && (
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="text-[13px] font-semibold text-gray-800">{v.label}</span>
+                      <span className="text-[12px] text-gray-400">{v.sizes.length} шт.</span>
+                    </div>
+                  )}
+                  <div className="overflow-x-auto rounded-xl border border-gray-100">
+                    <table className="w-full border-collapse text-left text-[12.5px]">
+                      <thead>
+                        <tr className="bg-gray-50 text-[11px] text-gray-500">
+                          <th className="sticky left-0 bg-gray-50 px-3 py-2 font-medium uppercase tracking-wide">DN</th>
+                          <th className="px-3 py-2 font-medium uppercase tracking-wide">PN</th>
+                          <th className="px-3 py-2 font-medium uppercase tracking-wide">Артикул</th>
+                          {cols.map((c) =>
+                            c.key === 'm' ? (
+                              <th key={c.key} className="whitespace-nowrap px-2.5 py-2 text-center font-medium">Маса, кг</th>
+                            ) : (
+                              <th key={c.key} title={c.hint} className="whitespace-nowrap px-2.5 py-2 text-center text-[12px] font-semibold text-gray-700">
+                                {c.key}
+                              </th>
+                            ),
+                          )}
+                          {withKv && <th className="whitespace-nowrap px-2.5 py-2 text-center font-medium">Kv</th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {v.sizes.map((s, si) => {
+                          const reductor = !!s.code && s.code.includes('.302')
+                          const row = specs?.rows[`${bore}:${s.dn}:${s.pn}`]
+                          const onRequest = !!row && row[0] === 'за запитом'
+                          const kv = KV[s.dn]?.[bore as 'СП' | 'ПП']
+                          return (
+                            <tr key={si} className="border-t border-gray-100">
+                              <td className="sticky left-0 whitespace-nowrap bg-white px-3 py-1.5 font-medium text-gray-900">
+                                DN{s.dn}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-1.5 text-gray-600">PN{s.pn}</td>
+                              <td className="whitespace-nowrap px-3 py-1.5">
+                                <span className="font-mono text-[11.5px] text-gray-700">{s.code}</span>
+                                {reductor && (
+                                  <span className="ml-2 whitespace-nowrap rounded bg-[#F5B915]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#8a6d0b]">
+                                    редуктор
+                                  </span>
+                                )}
+                              </td>
+                              {specs &&
+                                (onRequest ? (
+                                  <td colSpan={cols.length} className="px-2.5 py-1.5 text-center text-gray-500">
+                                    за запитом
+                                  </td>
+                                ) : (
+                                  (row ?? Array(cols.length).fill('—')).map((cell, ci) => (
+                                    <td
+                                      key={ci}
+                                      className={`whitespace-nowrap px-2.5 py-1.5 text-center tabular-nums ${
+                                        cols[ci]?.key === 'm' ? 'font-medium text-gray-900' : 'text-gray-600'
+                                      }`}
+                                    >
+                                      {cell}
+                                    </td>
+                                  ))
+                                ))}
+                              {withKv && (
+                                <td className="whitespace-nowrap px-2.5 py-1.5 text-center tabular-nums text-gray-600">
+                                  {kv ?? '—'}
+                                </td>
+                              )}
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            })}
+
+            <Cta href="#contact-details" onClick={onClose} className="mt-6">
+              Залишити запит
+            </Cta>
+          </div>
         </div>
       </div>
     </div>
