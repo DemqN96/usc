@@ -11,7 +11,7 @@ const footerLinks = (page: PageId) => [
   { label: 'Про компанію', href: page === 'home' ? '#top' : HOME_URL },
   { label: 'Кульові крани USC', href: KRANY_URL },
   { label: 'PROTE', href: PROTE_URL },
-  { label: 'Інша продукція', href: sectionHref(page, '#catalog') },
+  { label: 'Інша продукція', href: sectionHref(page, '#full-catalog') },
   { label: 'Партнерам та дилерам', href: sectionHref(page, '#dealers') },
   { label: 'Сертифікати', href: sectionHref(page, '#certificates') },
   { label: 'Контакти', href: sectionHref(page, '#contact-details') },

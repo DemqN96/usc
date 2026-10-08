@@ -2,6 +2,7 @@ import proteForest from '../assets/prote-forest.jpg'
 import proteWordmark from '../assets/prote-wordmark.png'
 import proteLogo from '../assets/prote-logo.png'
 import kranyCover from '../assets/krany-cover.webp'
+import inshiCover from '../assets/inshi-cover.webp'
 import uscEmblem from '../assets/usc-emblem.webp'
 import uscWordmark from '../assets/usc-wordmark.png'
 
@@ -12,6 +13,8 @@ import uscWordmark from '../assets/usc-wordmark.png'
 const STRIP = {
   fit: 'h-[150px] sm:h-auto sm:aspect-[3/1]',
   band: 'h-[150px] sm:h-[210px] lg:h-[240px]',
+  /** full-width card: 3:1 while it is one column, then the 9:2 group shot uncropped */
+  wide: 'h-[150px] sm:h-auto sm:aspect-[3/1] lg:aspect-[9/2]',
 }
 
 /** Product-line cover — a wide photo with the brand lockup (round mark +
@@ -69,6 +72,22 @@ export function ProteCover({ strip }: { strip?: keyof typeof STRIP }) {
       wordmark={proteWordmark}
       wordmarkAlt="PROTE"
       strip={strip}
+    />
+  )
+}
+
+/** Other products: USC lockup on a studio group shot of valves, a tapping
+ *  sleeve and a flange. */
+export function InshiCover() {
+  return (
+    <BrandCover
+      cover={inshiCover}
+      coverAlt="Засувки, врізний хомут і фланець з каталогу USC"
+      logo={uscEmblem}
+      logoAlt="USC — Ukrainian Santechnical Company"
+      wordmark={uscWordmark}
+      wordmarkAlt="USC"
+      strip="wide"
     />
   )
 }

@@ -50,7 +50,9 @@ export function jumpToCategory(id: string) {
     return
   }
   window.dispatchEvent(new CustomEvent(CATEGORY_JUMP_EVENT, { detail: id }))
-  catalog.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  // the event also unfolds the «Інша продукція» card; land on its catalog
+  const target = document.getElementById('full-catalog') ?? catalog
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 type NavItem =

@@ -25,7 +25,7 @@ export const CATEGORY_JUMP_EVENT = 'usc:select-category'
 export const homeHref = (hash = '') => `${HOME_URL}${hash}`
 
 /** Link that opens the catalog with `id` preselected (read by ProductShop). */
-export const categoryHref = (id: string) => `${HOME_URL}?cat=${encodeURIComponent(id)}#catalog`
+export const categoryHref = (id: string) => `${HOME_URL}?cat=${encodeURIComponent(id)}#full-catalog`
 
 /** Link to a technology on the PROTE page; the panel opens from the hash. */
 export const proteTechHref = (slug: string) => `${PROTE_URL}#${slug}`

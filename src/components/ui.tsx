@@ -22,6 +22,8 @@ export function Cta({
   size = 'md',
   pulse = false,
   className = '',
+  expanded,
+  controls,
 }: {
   href: string
   children: string
@@ -31,12 +33,17 @@ export function Cta({
   /** a halo that swells around the button now and then */
   pulse?: boolean
   className?: string
+  /** when the button unfolds a region on the page */
+  expanded?: boolean
+  controls?: string
 }) {
   const lg = size === 'lg'
   return (
     <a
       href={href}
       onClick={onClick}
+      aria-expanded={expanded}
+      aria-controls={controls}
       className={`usc-cta group/cta inline-flex items-center gap-3 rounded-full py-2.5 pl-6 pr-2.5 font-semibold text-gray-900 ${
         lg ? 'text-[15px] sm:gap-4 sm:py-3 sm:pl-8 sm:pr-3 sm:text-[17px]' : 'text-[14px] sm:pl-7 sm:text-[15px]'
       } ${pulse ? 'usc-cta--pulse' : ''} ${className}`}
